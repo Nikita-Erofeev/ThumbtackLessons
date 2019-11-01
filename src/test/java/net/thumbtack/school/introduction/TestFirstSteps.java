@@ -21,7 +21,7 @@ public class TestFirstSteps {
         assertEquals(4, firstSteps.mul(2, 2));
         assertEquals(100000000, firstSteps.mul(10000, 10000));
     }
-/*
+
     @Test
     public void testDiv() {
         FirstSteps firstSteps = new FirstSteps();
@@ -243,5 +243,5 @@ public class TestFirstSteps {
         assertTrue(firstSteps.isSortedDescendant(matrix4));
         int[][] matrix5 = {{5, 4, 3, 2, 1}, {12, 5, 4, 3}, {34, 12, 10, 9, 8, 7, 6}};
         assertTrue(firstSteps.isSortedDescendant(matrix5));
-    }*/
+    }
 }
