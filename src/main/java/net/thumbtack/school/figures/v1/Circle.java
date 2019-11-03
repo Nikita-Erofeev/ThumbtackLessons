@@ -50,14 +50,14 @@ public class Circle {
         return 2*Math.PI*radius;
     }
     public boolean isInside(int x, int y){
-        if (Math.sqrt(Math.abs(this.center.getX()-x)*Math.abs(this.center.getX()-x)+Math.abs(this.center.getY()-y)*
-                Math.abs(this.center.getY()-y))<this.radius)
+        if ((this.center.getX()-x)*(this.center.getX()-x)+(this.center.getY()-y)*
+                (this.center.getY()-y)<=this.radius*this.radius)
             return true;
         return false;
     }
     public boolean isInside(Point point){
-        if (Math.sqrt(Math.abs(this.center.getX()-point.getX())*Math.abs(this.center.getX()-point.getX())+Math.abs(this.center.getY()-point.getY())*
-                Math.abs(this.center.getY()-point.getY()))<this.radius)
+        if ((this.center.getX()-point.getX())*(this.center.getX()-point.getX())+(this.center.getY()-point.getY())*
+                (this.center.getY()-point.getY())<=this.radius*this.radius)
             return true;
         return false;
     }

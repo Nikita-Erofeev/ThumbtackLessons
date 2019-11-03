@@ -20,11 +20,12 @@ public class Rectangle {
         rightBottom.setY(yBottom);
     }
     public Rectangle(int length, int width){
-        leftTop.setY(length);
-        rightBottom.setX(width);
+
+        leftTop.setY(-width);
+        rightBottom.setX(length);
     }
     public Rectangle(){
-        leftTop.setY(1);
+        leftTop.setY(-1);
         rightBottom.setX(1);
     }
     public Point getTopLeft(){
@@ -40,15 +41,9 @@ public class Rectangle {
         this.rightBottom=bottomRight;
     }
     public int getLength(){
-        if(this.sideA()>this.sideB())
-            return this.sideA();
-        else
             return this.sideB();
     }
     public int getWidth(){
-        if(this.sideA()>this.sideB())
-            return this.sideB();
-        else
             return this.sideA();
     }
     public void moveRel(int dx, int dy){
@@ -56,14 +51,18 @@ public class Rectangle {
         rightBottom.moveRel(dx, dy);
     }
     public void moveTo(int x, int y){
+        int toX = x-leftTop.getX();
+        int toY = y-leftTop.getY();
         leftTop.moveTo(x, y);
-        rightBottom.setX(leftTop.getX()+sideB());
-        rightBottom.setY(leftTop.getY()+sideA());
+        rightBottom.setX(rightBottom.getX()+toX);
+        rightBottom.setY(rightBottom.getY()+toY);
     }
     public void moveTo(Point point){
+        int toX = point.getX()-leftTop.getX();
+        int toY = point.getY()-leftTop.getY();
         leftTop=point;
-        rightBottom.setX(leftTop.getX()+sideB());
-        rightBottom.setY(leftTop.getY()+sideA());
+        rightBottom.setX(rightBottom.getX()+toX);
+        rightBottom.setY(rightBottom.getY()+toY);
     }
     public void resize(int ratio){
         rightBottom.setX(leftTop.getX()+sideB()*ratio);

@@ -9,7 +9,7 @@ public class PolyLine {
         this.points=points;
     }
     public Point[] getPoints(){
-        return points;
+        return points.clone();
     }
     public void setPoints(Point[] points){
         this.points=points;
@@ -35,7 +35,9 @@ public class PolyLine {
     public void moveTo(Point point){
         int whereX = point.getX() - points[0].getX();
         int whereY = point.getY() - points[0].getY();
-        points[0]=point;
+        //points[0]=point;
+        points[0].setX(point.getX());
+        points[0].setY(point.getY());
         for(int i=1;i<points.length;i++){
             points[i].setX(points[i].getX()+whereX);
             points[i].setY(points[i].getY()+whereY);
@@ -43,20 +45,22 @@ public class PolyLine {
     }
     public void moveRel(int dx, int dy){
         for(int i=0;i<points.length;i++){
-            points[i].moveRel(dx, dy);
+            //points[i].moveRel(dx, dy);
+            points[i].setX(points[i].getX()+dx);
+            points[i].setY(points[i].getY()+dy);
         }
     }
     public Rectangle getBoundingRectangle(){
-        int xLeft=0,yTop=0,xRight=0,yBottom=0;
+        int xLeft=points[0].getX(),yTop=points[0].getY(),xRight=points[0].getX(),yBottom=points[0].getY();
         for(int i=0;i<points.length;i++) {
-            if (points[i].getX() > xRight)
-                xRight = points[i].getX();
-            if (points[i].getX() < xLeft)
-                xLeft = points[i].getX();
-            if (points[i].getY() > yTop)
-                yTop = points[i].getY();
-            if (points[i].getY() < yBottom)
-                yBottom = points[i].getY();
+                if(xLeft>points[i].getX())
+                    xLeft=points[i].getX();
+                if(xRight<points[i].getX())
+                    xRight=points[i].getX();
+                if (yBottom<points[i].getY())
+                    yBottom=points[i].getY();
+                if(yTop>points[i].getY())
+                    yTop=points[i].getY();
         }
         Rectangle rect = new Rectangle(xLeft, yTop, xRight, yBottom);
         return rect;
