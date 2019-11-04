@@ -1,0 +1,250 @@
+package net.thumbtack.school.base;
+
+public class StringOperations {
+    public static int getSummaryLength(String[] strings){
+        int lenght=0;
+        for(String string:strings){
+            lenght+=string.length();
+        }
+        return lenght;
+    }
+    public static String getFirstAndLastLetterString(String string){
+        return string.substring(0,1)+string.substring(string.length()-1);
+    }
+    public static boolean isSameCharAtPosition(String string1, String string2, int index){
+        if (string1.substring(index,index+1).equals(string2.substring(index,index+1)))
+            return true;
+        return false;
+    }
+    public static boolean isSameFirstCharPosition(String string1, String string2, char character){
+        int pos1 = string1.indexOf(character);
+        int pos2 = string2.indexOf(character);
+        if (pos1==pos2)
+            return true;
+        return false;
+    }
+    public static boolean isSameLastCharPosition(String string1, String string2, char character){
+        int pos1 = string1.lastIndexOf(character);
+        int pos2 = string2.lastIndexOf(character);
+        if (pos1==pos2)
+            return true;
+        return false;
+    }
+    public static boolean isSameFirstStringPosition(String string1, String string2, String str){
+        int pos1 = string1.indexOf(str);
+        int pos2 = string2.indexOf(str);
+        if (pos1==pos2)
+            return true;
+        return false;
+    }
+    public static boolean isSameLastStringPosition(String string1, String string2, String str){
+        int pos1 = string1.lastIndexOf(str);
+        int pos2 = string2.lastIndexOf(str);
+        if (pos1==pos2)
+            return true;
+        return false;
+    }
+    public static boolean isEqual(String string1, String string2){
+        if (string1.equals(string2))
+            return true;
+        return false;
+    }
+    public static boolean isEqualIgnoreCase(String string1, String string2){
+        if (string1.equalsIgnoreCase(string2))
+            return true;
+        return false;
+    }
+    public static boolean isLess(String string1, String string2){
+        if (string1.compareTo(string2)<0)
+            return true;
+        return false;
+    }
+    public static boolean isLessIgnoreCase(String string1, String string2){
+        if(string1.compareToIgnoreCase(string2)<0)
+            return true;
+        return false;
+    }
+    public static String concat(String string1, String string2){
+        return string1.concat(string2);
+    }
+    public static boolean isSamePrefix(String string1, String string2, String prefix){
+        if (string1.startsWith(prefix) & string2.startsWith(prefix))
+            return true;
+        return false;
+    }
+    public static boolean isSameSuffix(String string1, String string2, String suffix){
+        if (string1.endsWith(suffix) & string2.endsWith(suffix))
+            return true;
+        return false;
+    }
+    public static String getCommonPrefix(String string1, String string2){
+        StringBuilder sb =new StringBuilder();
+        char c1,c2;
+        int i=0;
+        c1=string1.charAt(i);
+        c2=string2.charAt(i);
+        while (c1==c2){
+            sb.append(c1);
+            if (i==string1.length()-1 || i==string2.length()-1)
+                break;
+            i++;
+            c1=string1.charAt(i);
+            c2=string2.charAt(i);
+        }
+        return sb.toString();
+    }
+    public static String reverse(String string){
+        String sb = new StringBuffer(string).reverse().toString();
+        return sb;
+    }
+    public static boolean isPalindrome(String string){
+        char[] c1=new char[string.length()];
+        char t;
+        for (int i=0;i<string.length();i++){
+            c1[i]=string.charAt(i);
+        }
+        for (int i=0;i<string.length()/2;i++){
+            if (c1[i]!=c1[string.length()-1-i])
+                return false;
+        }
+        return true;
+    }
+    public static boolean isPalindromeIgnoreCase(String string){
+        int index;
+        if (string.length()%2==0){
+               index=string.length()/2;
+               String sb = new StringBuffer(string.substring(index)).reverse().toString();
+               if (string.substring(0,index).equalsIgnoreCase(sb))
+                   return true;
+        } else {
+            index=string.length()/2;
+            String sb = new StringBuffer(string.substring(index+1)).reverse().toString();
+            if (string.substring(0,index).equalsIgnoreCase(sb))
+                return true;
+        }
+        return false;
+    }
+    public static String getLongestPalindromeIgnoreCase(String[] strings){
+        int lenght=0,index;
+        String answ="";
+        for (String string:strings){
+            index=string.length()/2;
+            if (string.length()%2==0){
+                String sb = new StringBuffer(string.substring(index)).reverse().toString();
+                if (string.substring(0,index).equalsIgnoreCase(sb) & string.length()>lenght){
+                    lenght=string.length();
+                    answ=string;
+                }
+            }else {
+                String sb = new StringBuffer(string.substring(index+1)).reverse().toString();
+                if (string.substring(0,index).equalsIgnoreCase(sb) & string.length()>lenght){
+                    lenght = string.length();
+                    answ = string;
+                }
+            }
+        }
+        return answ;
+    }
+    public static boolean hasSameSubstring(String string1, String string2, int index, int length){
+        try {
+            if (string1.substring(index,index+length).equals(string2.substring(index,index+length)))
+                return true;
+            return false;
+        }catch (Exception e){
+            return false;
+        }
+
+    }
+
+    public static boolean isEqualAfterReplaceCharacters(String string1, char replaceInStr1, char replaceByInStr1,
+                                                        String string2, char replaceInStr2, char replaceByInStr2){
+        if (string1.replace(replaceInStr1,replaceByInStr1).equals(string2.replace(replaceInStr2,replaceByInStr2)))
+            return true;
+        return false;
+    }
+    public static boolean isEqualAfterReplaceStrings(String string1, String replaceInStr1, String replaceByInStr1,
+                                                     String string2, String replaceInStr2, String replaceByInStr2){
+        if (string1.replaceAll(replaceInStr1,replaceByInStr1).equals(string2.replaceAll(replaceInStr2,replaceByInStr2)))
+            return true;
+        return false;
+    }
+    public static boolean isPalindromeAfterRemovingSpacesIgnoreCase(String string){
+        String s= string.replaceAll("\\s",""); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        int index;
+        if (s.length()%2==0){
+            index=s.length()/2;
+            String sb = new StringBuffer(s.substring(index)).reverse().toString();
+            if (s.substring(0,index).equalsIgnoreCase(sb))
+                return true;
+        } else {
+            index=s.length()/2;
+            String sb = new StringBuffer(s.substring(index+1)).reverse().toString();
+            if (s.substring(0,index).equalsIgnoreCase(sb))
+                return true;
+        }
+        return false;
+    }
+    public static boolean isEqualAfterTrimming(String string1, String string2){
+        if (string1.trim().equals(string2.trim()))
+            return true;
+        return false;
+    }
+    public static String makeCsvStringFromInts(int[] array){
+        StringBuilder s = new StringBuilder();
+        for (int i=0;i<array.length;i++){
+            s.append(array[i]);
+            if (i+1<array.length)
+                s.append(",");
+        }
+        return s.toString();
+    }
+    public static String makeCsvStringFromDoubles(double[] array){
+        StringBuilder s = new StringBuilder();
+        String t;
+        for (int i=0;i<array.length;i++){
+            t= String.format("%.2f",array[i]);
+            s.append(t);
+            if (i+1<array.length)
+                s.append(",");
+        }
+        return s.toString();
+    }
+    public static StringBuilder makeCsvStringBuilderFromInts(int[] array){
+        StringBuilder s = new StringBuilder();
+        for (int i=0;i<array.length;i++){
+            s.append(array[i]);
+            if (i+1<array.length)
+                s.append(",");
+        }
+        return s;
+    }
+    public static StringBuilder makeCsvStringBuilderFromDoubles(double[] array){
+        StringBuilder s = new StringBuilder();
+        String t;
+        for (int i=0;i<array.length;i++){
+            t= String.format("%.2f",array[i]);
+            s.append(t);
+            if (i+1<array.length)
+                s.append(",");
+        }
+        return s;
+    }
+    public static StringBuilder removeCharacters(String string, int[] positions){
+        StringBuilder sb = new StringBuilder().append(string);
+        int i=0;
+            for(int position:positions) {
+                sb.deleteCharAt(position-i);
+                i++;
+            }
+        return sb;
+    }
+    public static StringBuilder insertCharacters(String string, int[] positions, char[] characters){
+        StringBuilder sb = new StringBuilder().append(string);
+        int j=0;
+        for (int i=0;i<positions.length;i++){
+            sb.insert(positions[i]+j,characters[i]);
+            j++;
+        }
+        return sb;
+    }
+}
