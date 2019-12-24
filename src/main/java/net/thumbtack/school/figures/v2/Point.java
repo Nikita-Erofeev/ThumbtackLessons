@@ -1,6 +1,24 @@
 package net.thumbtack.school.figures.v2;
 
-public class Point {
+import net.thumbtack.school.iface.v2.Movable;
+
+public class Point extends Figure implements Movable {
+
+    //Только для возможности имплементации
+    public Point getFirstPoint() {
+        return null;
+    }
+
+    public Point getSecondPoint() {
+        return null;
+    }
+
+    public void setFirstPoint(Point point) {
+    }
+
+    public void setSecondPoint(int x, int y) {
+    }
+
 
     private int x, y;
 
@@ -32,6 +50,11 @@ public class Point {
     public void moveTo(int newX, int newY) {
         x = newX;
         y = newY;
+    }
+
+    public void moveTo(Point point) {
+        this.x = point.getX();
+        this.y = point.getY();
     }
 
     public void moveRel(int dx, int dy) {

@@ -2,62 +2,97 @@ package net.thumbtack.school.figures.v2;
 
 import net.thumbtack.school.iface.v2.Movable;
 
-public class Line implements Movable {
+public class Line extends Figure implements Movable {
     private Point startPoint = new Point();
     private Point endPoint = new Point();
-    public Line(Point startPoint, Point endPoint){
-        this.startPoint=startPoint;
-        this.endPoint=endPoint;
+
+    public Line(Point startPoint, Point endPoint) {
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
     }
-    public Line(int xLeft, int yTop, int xRight, int yBottom){
+
+    public Line(int xLeft, int yTop, int xRight, int yBottom) {
         startPoint.setX(xLeft);
         startPoint.setY(yTop);
         endPoint.setX(xRight);
         endPoint.setY(yBottom);
     }
-    public Line(Point endPoint){
-        this.endPoint=endPoint;
+
+    public Line(Point endPoint) {
+        this.endPoint = endPoint;
     }
-    public Line(int x, int y){
+
+    public Line(int x, int y) {
         endPoint.setX(x);
         endPoint.setY(y);
     }
-    public Line(){
+
+    public Line() {
         endPoint.setX(1);
         endPoint.setY(1);
     }
-    public Point getStartPoint(){
+
+    public Point getStartPoint() {
         return startPoint;
     }
-    public Point getEndPoint(){
+
+    @Override
+    public Point getFirstPoint() {
+        return startPoint;
+    }
+
+    @Override
+    public Point getSecondPoint() {
         return endPoint;
     }
-    public void setStartPoint(Point point){
-        this.startPoint=point;
+
+    public Point getEndPoint() {
+        return endPoint;
     }
-    public void setEndPoint(Point point){
-        this.endPoint=point;
+
+    public void setStartPoint(Point point) {
+        startPoint = point;
     }
-    public double getLength(){
-        return Math.sqrt(Math.abs(startPoint.getX()-endPoint.getX())*Math.abs(startPoint.getX()-endPoint.getX())
-                +Math.abs(startPoint.getY()-endPoint.getY())*Math.abs(startPoint.getY()-endPoint.getY()));
+
+    @Override
+    public void setFirstPoint(Point point) {
+        startPoint = point;
     }
-    public void moveTo(int x, int y){
+
+    public void setEndPoint(Point point) {
+        endPoint = point;
+    }
+
+    @Override
+    public void setSecondPoint(int x, int y) {
+        endPoint.setX(x);
+        endPoint.setY(y);
+    }
+
+    public double getLength() {
+        double x = Math.pow(startPoint.getX() - endPoint.getX(),2);
+        double y = Math.pow(startPoint.getY() - endPoint.getY(),2);
+        return Math.sqrt(x + y);
+    }
+
+    public void moveTo(int x, int y) {
         int whereX = x - startPoint.getX();
         int whereY = y - startPoint.getY();
         startPoint.setX(x);
         startPoint.setY(y);
-        endPoint.setX(endPoint.getX()+whereX);
-        endPoint.setY(endPoint.getY()+whereY);
+        endPoint.setX(endPoint.getX() + whereX);
+        endPoint.setY(endPoint.getY() + whereY);
     }
-    public void moveTo(Point point){
-        int whereX = point.getX() - startPoint.getX();
-        int whereY = point.getY() - startPoint.getY();
-        startPoint=point;
-        endPoint.setX(endPoint.getX()+whereX);
-        endPoint.setY(endPoint.getY()+whereY);
-    }
-    public void moveRel(int dx, int dy){
+
+   /* public void moveTo(Point point) {
+        int toX = point.getX() - startPoint.getX();
+        int toY = point.getY() - startPoint.getY();
+        startPoint = point;
+        endPoint.setX(endPoint.getX() + toX);
+        endPoint.setY(endPoint.getY() + toY);
+    }*/
+
+    public void moveRel(int dx, int dy) {
         startPoint.moveRel(dx, dy);
         endPoint.moveRel(dx, dy);
     }

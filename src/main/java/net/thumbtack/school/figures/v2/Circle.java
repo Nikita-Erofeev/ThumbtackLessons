@@ -4,64 +4,102 @@ import net.thumbtack.school.iface.v2.HasMetrics;
 import net.thumbtack.school.iface.v2.Movable;
 import net.thumbtack.school.iface.v2.Resizable;
 
-public class Circle implements HasMetrics, Movable, Resizable {
+public class Circle extends ClosedFigure implements HasMetrics, Movable, Resizable {
     private Point center = new Point();
-    private int radius=1;
+    private int radius = 1;
 
-    public Circle(Point center, int radius){
-        this.center=center;
-        this.radius=radius;
-    }
-    public Circle(int xCenter, int yCenter, int radius){
-        center.setX(xCenter);
-        center.setY(yCenter);
-        this.radius=radius;
-    }
-    public Circle(int radius){
-        this.radius=radius;
-    }
-    public Circle(){
-        this.radius=1;
-    }
-    public Point getCenter(){
+    //Только для возможности имплементации
+    public Point getFirstPoint() {
         return center;
     }
-    public int getRadius(){
+
+    public Point getSecondPoint() {
+        return center;
+    }
+
+    public void setFirstPoint(Point point) {
+    }
+
+    public void setSecondPoint(int x, int y) {
+    }
+
+    public Circle(Point center, int radius) {
+        this.center = center;
+        this.radius = radius;
+    }
+
+    public Circle(int xCenter, int yCenter, int radius) {
+        center.setX(xCenter);
+        center.setY(yCenter);
+        this.radius = radius;
+    }
+
+    public Circle(int radius) {
+        this.radius = radius;
+    }
+
+    public Circle() {
+        radius = 1;
+    }
+
+    public Point getCenter() {
+        return center;
+    }
+
+    public int getRadius() {
         return radius;
     }
-    public void setCenter(Point center){
-        this.center=center;
+
+    public void setCenter(Point center) {
+        this.center = center;
     }
-    public void setRadius(int radius){
-        this.radius=radius;
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
-    public void moveRel(int dx, int dy){
-        this.center.moveRel(dx, dy);
+
+    public void moveRel(int dx, int dy) {
+        center.moveRel(dx, dy);
     }
-    public void moveTo(int x, int y){
-        this.center.moveTo(x, y);
+
+    public void moveTo(int x, int y) {
+        center.moveTo(x, y);
     }
-    public void moveTo(Point point){
-        this.center=point;
+
+    @Override
+    public void moveTo(Point point) {
+        center = point;
     }
-    public void resize(int ratio){
-        this.radius*=ratio;
+
+    public void resize(int ratio) {
+        radius *= ratio;
     }
-    public double getArea(){
-        return Math.PI*radius*radius;
+
+    public double getArea() {
+        return Math.PI * radius * radius;
     }
-    public double getPerimeter(){
-        return 2*Math.PI*radius;
+
+    public double getPerimeter() {
+        return 2 * Math.PI * radius;
     }
-    public boolean isInside(int x, int y){
-        if ((this.center.getX()-x)*(this.center.getX()-x)+(this.center.getY()-y)*
-                (this.center.getY()-y)<=this.radius*this.radius)
+
+    public boolean isInside(int x, int y) {
+        int centerX = center.getX();
+        int centerY = center.getY();
+        int dist = (centerX - x) * (centerX - x) + (centerY - y) * (centerY - y);
+        int radSquare = radius * radius;
+        if (dist <= radSquare)
             return true;
         return false;
     }
-    public boolean isInside(Point point){
-        if ((this.center.getX()-point.getX())*(this.center.getX()-point.getX())+(this.center.getY()-point.getY())*
-                (this.center.getY()-point.getY())<=this.radius*this.radius)
+
+    public boolean isInside(Point point) {
+        int centerX = center.getX();
+        int centerY = center.getY();
+        int dist = (centerX - point.getX()) * (centerX - point.getX()) +
+                (centerY - point.getY()) * (centerY - point.getY());
+        int radSquare = radius * radius;
+        if (dist <= radSquare)
             return true;
         return false;
     }
