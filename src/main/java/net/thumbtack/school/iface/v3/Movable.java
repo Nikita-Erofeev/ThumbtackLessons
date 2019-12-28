@@ -1,6 +1,6 @@
-package net.thumbtack.school.iface.v2;
+package net.thumbtack.school.iface.v3;
 
-import net.thumbtack.school.figures.v2.Point;
+import net.thumbtack.school.figures.v3.Point;
 
 
 public interface Movable {
