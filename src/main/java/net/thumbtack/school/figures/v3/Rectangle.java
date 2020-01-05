@@ -30,7 +30,6 @@ public class Rectangle extends ClosedFigure implements Movable, Resizable, HasMe
     }
 
     public Rectangle(int length, int width) {
-
         leftTop.setY(-width);
         rightBottom.setX(length);
     }
@@ -41,11 +40,11 @@ public class Rectangle extends ClosedFigure implements Movable, Resizable, HasMe
     }
 
     public Point getTopLeft() {
-        return this.leftTop;
+        return leftTop;
     }
 
     public Point getBottomRight() {
-        return this.rightBottom;
+        return rightBottom;
     }
 
     //new
@@ -117,16 +116,12 @@ public class Rectangle extends ClosedFigure implements Movable, Resizable, HasMe
     }
 
     public boolean isInside(int x, int y) {
-        if (leftTop.getX() <= x & leftTop.getY() <= y & rightBottom.getX() >= x & rightBottom.getY() >= y)
-            return true;
-        return false;
+        return leftTop.getX() <= x & leftTop.getY() <= y & rightBottom.getX() >= x & rightBottom.getY() >= y;
     }
 
     public boolean isInside(Point point) {
-        if (leftTop.getX() <= point.getX() & leftTop.getY() <= point.getY() & rightBottom.getX() >= point.getX() &
-                rightBottom.getY() >= point.getY())
-            return true;
-        return false;
+        return leftTop.getX() <= point.getX() & leftTop.getY() <= point.getY() & rightBottom.getX() >= point.getX() &
+                rightBottom.getY() >= point.getY();
     }
 
     public boolean isIntersects(Rectangle rectangle) {
