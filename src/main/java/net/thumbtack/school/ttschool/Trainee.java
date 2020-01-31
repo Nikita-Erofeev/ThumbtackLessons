@@ -9,13 +9,13 @@ public class Trainee implements Serializable {
     private int rating;
 
     public Trainee(String firstName, String lastName, int rating) throws TrainingException {
-        if(firstName != "" && firstName != null){
+        if(firstName != null && !firstName.equals("")){
             this.firstName = firstName;
         } else {
             throw new TrainingException(TrainingErrorCode.TRAINEE_WRONG_FIRSTNAME);
         }
 
-        if(lastName !="" && lastName != null){
+        if(lastName != null && !lastName.equals("")){
             this.lastName = lastName;
         } else {
             throw new TrainingException(TrainingErrorCode.TRAINEE_WRONG_LASTNAME);
