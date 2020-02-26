@@ -1,10 +1,10 @@
 package net.thumbtack.school.competition.dto;
 
-public class RegisterUserDtoResponse {
+public class TokenDtoResponse {
     private String token;
 
-    public RegisterUserDtoResponse(String response){
-        token = response;
+    public TokenDtoResponse(String token){
+        this.token = token;
     }
 
     public String getToken() {

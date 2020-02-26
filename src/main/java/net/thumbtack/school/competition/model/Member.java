@@ -15,19 +15,11 @@ public class Member extends User implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        Member member = (Member) o;
-
-        return companyName != null ? companyName.equals(member.companyName) : member.companyName == null;
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (companyName != null ? companyName.hashCode() : 0);
-        return result;
+        return super.hashCode();
     }
 }

@@ -8,4 +8,12 @@ public class LoginDto {
         this.login = login;
         this.password = password;
     }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }
