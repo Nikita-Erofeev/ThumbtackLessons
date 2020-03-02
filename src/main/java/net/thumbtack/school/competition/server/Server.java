@@ -1,7 +1,6 @@
 package net.thumbtack.school.competition.server;
 
 import com.google.gson.Gson;
-import net.thumbtack.school.competition.database.Database;
 import net.thumbtack.school.competition.dto.DtoError;
 import net.thumbtack.school.competition.dto.DtoResponse;
 import net.thumbtack.school.competition.exceptions.CompetitionException;
@@ -19,7 +18,8 @@ public class Server {
     public String startServer(String savedDataFileName) {
         Gson json = new Gson();
         try {
-            run = Database.uploadDatabase(savedDataFileName);
+            UserService userService = new UserService();
+            run = userService.startServer(savedDataFileName);
             return json.toJson(new DtoResponse("Database uploaded"));
         } catch (CompetitionException e) {
             return json.toJson(new DtoError(e.getErrorCode().getErrorString()));
@@ -30,7 +30,8 @@ public class Server {
     public String stopServer(String savedDataFileName) {
         Gson json = new Gson();
         try {
-            run = !Database.saveDatabase(savedDataFileName);
+            UserService userService = new UserService();
+            run = !userService.stopServer(savedDataFileName);
             return json.toJson(new DtoResponse("Database saved"));
         } catch (CompetitionException e) {
             return json.toJson(new DtoError(e.getErrorCode().getErrorString()));
@@ -91,6 +92,7 @@ public class Server {
         return json.toJson(new DtoError("Database is not available"));
     }
 
+    /*Перегруженный метод, который обращается к одному и тому же методу класса UserService*/
     public String addApplication(String token, String[] appJsonDto) {
         Gson json = new Gson();
         String[] errors = new String[appJsonDto.length];
@@ -100,18 +102,18 @@ public class Server {
         if (run) {
             UserService userService = new UserService();
             for (String app : appJsonDto) {
-                response.append(userService.addApplication(token, app));
-                if (!response.toString().equals("{\"response\":\"ok\"}")) {
-                    errors[i] = app + response.toString();
+                response.append(userService.addApplication(token, app));    //Добавление каждой заявки отдельно
+                if (!response.toString().equals("{\"response\":\"ok\"}")) { //Если вернуло ошибку
+                    errors[i] = app + response.toString();   //Добавляем в массив с ошибками в виде "заявка ошибка"
                     i++;
                     anyErrors = true;
                 }
-                response.delete(0,response.length());
+                response.delete(0, response.length());  //Работает как буфер, хранит 1 ответ
             }
             StringBuilder errorsString = new StringBuilder();
-            if(anyErrors){
-                for (String error : errors){
-                    if(error != null){
+            if (anyErrors) {                        //Если среди заявок хотябы одна не добавилась
+                for (String error : errors) {
+                    if (error != null) {    //В массиве множество null элементов, от них избавляемся
                         errorsString.append(error);
                     }
                 }
@@ -130,7 +132,7 @@ public class Server {
         return json.toJson(new DtoError("Database is not available"));
     }
 
-    public String memberDeleteApplication(String tokenDtoJson, String appJsonDto){
+    public String memberDeleteApplication(String tokenDtoJson, String appJsonDto) {
         Gson json = new Gson();
         if (run) {
             UserService userService = new UserService();
@@ -139,7 +141,7 @@ public class Server {
         return json.toJson(new DtoError("Database is not available"));
     }
 
-    public String expertShowApplications(String tokenDtoJson){
+    public String expertShowApplications(String tokenDtoJson) {
         Gson json = new Gson();
         if (run) {
             UserService userService = new UserService();
@@ -148,25 +150,25 @@ public class Server {
         return json.toJson(new DtoError("Database is not available"));
     }
 
-    public String expertShowApplications(String tokenDtoJson, List<String> subjects){
+    public String expertShowApplications(String tokenDtoJson, List<String> subjects) {
         Gson json = new Gson();
         if (run) {
             UserService userService = new UserService();
-            return userService.expertShowApplications(tokenDtoJson,subjects);
+            return userService.expertShowApplications(tokenDtoJson, subjects);
         }
         return json.toJson(new DtoError("Database is not available"));
     }
 
-    public String rateApplication(String tokenDtoJson, String applicationDtoJson, int rating){
+    public String rateApplication(String tokenDtoJson, String applicationDtoJson, int rating) {
         Gson json = new Gson();
         if (run) {
             UserService userService = new UserService();
-            return userService.rateApplication(tokenDtoJson,applicationDtoJson,rating);
+            return userService.rateApplication(tokenDtoJson, applicationDtoJson, rating);
         }
         return json.toJson(new DtoError("Database is not available"));
     }
 
-    public String showRatedApplications(String tokenDtoJson){
+    public String showRatedApplications(String tokenDtoJson) {
         Gson json = new Gson();
         if (run) {
             UserService userService = new UserService();
@@ -175,7 +177,7 @@ public class Server {
         return json.toJson(new DtoError("Database is not available"));
     }
 
-    public String changeRating(String tokenDtoJson, String applicationDtoJson, int rating){
+    public String changeRating(String tokenDtoJson, String applicationDtoJson, int rating) {
         Gson json = new Gson();
         if (run) {
             UserService userService = new UserService();
@@ -184,11 +186,20 @@ public class Server {
         return json.toJson(new DtoError("Database is not available"));
     }
 
-    public String deleteRating(String tokenDtoJson, String applicationDtoJson){
+    public String deleteRating(String tokenDtoJson, String applicationDtoJson) {
         Gson json = new Gson();
         if (run) {
             UserService userService = new UserService();
             return userService.deleteRating(tokenDtoJson, applicationDtoJson);
+        }
+        return json.toJson(new DtoError("Database is not available"));
+    }
+
+    public String summarize(String summarizeDtoJson) {
+        Gson json = new Gson();
+        if (run) {
+            UserService userService = new UserService();
+            return userService.summarize(summarizeDtoJson);
         }
         return json.toJson(new DtoError("Database is not available"));
     }

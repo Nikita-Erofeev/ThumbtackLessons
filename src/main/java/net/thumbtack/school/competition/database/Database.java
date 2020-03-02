@@ -3,6 +3,7 @@ package net.thumbtack.school.competition.database;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import net.thumbtack.school.competition.dto.LoginDto;
+import net.thumbtack.school.competition.dto.SummarizeDto;
 import net.thumbtack.school.competition.dto.TokenDtoResponse;
 import net.thumbtack.school.competition.exceptions.CompetitionException;
 import net.thumbtack.school.competition.exceptions.ErrorCode;
@@ -10,15 +11,16 @@ import net.thumbtack.school.competition.model.Application;
 import net.thumbtack.school.competition.model.Expert;
 import net.thumbtack.school.competition.model.Member;
 import net.thumbtack.school.competition.model.User;
+import org.apache.commons.collections4.MapIterator;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Database implements Serializable {
     private static Database instance;
-    private byte rating;
     private List<Member> members = new ArrayList<>();
     private List<Expert> experts = new ArrayList<>();
     private MultiValuedMap<Member, Application> applicationWithMember = new ArrayListValuedHashMap<>();
@@ -38,9 +40,6 @@ public class Database implements Serializable {
     }
 
     public static Database getInstance() {
-        /*if (instance == null) {
-            instance = new Database();
-        }*/
         return instance;
     }
 
@@ -49,23 +48,26 @@ public class Database implements Serializable {
             instance = new Database();
             return true;
         } else {
-            try (BufferedReader br = new BufferedReader(new FileReader(new File(savedDataFileName)))) {
-                Gson json = new Gson();
-                instance = json.fromJson(br, Database.class);
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(savedDataFileName)))) {
+                Database instance = (Database) ois.readObject();
                 return true;
-            } catch (IOException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 throw new CompetitionException(ErrorCode.ERROR_UPLOAD_DATABASE);
             }
         }
+    }
+
+    private void deleteUsersOnline() {
+        usersOnline = new HashMap<>();
     }
 
     public static boolean saveDatabase(String savedDataFileName) throws CompetitionException {
         if (savedDataFileName == null || savedDataFileName.equals("")) {
             return true;
         } else {
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File(savedDataFileName)))) {
-                Gson json = new Gson();
-                json.toJson(instance, bw);
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(savedDataFileName)))) {
+                instance.deleteUsersOnline();
+                oos.writeObject(instance);
                 return true;
             } catch (IOException e) {
                 throw new CompetitionException(ErrorCode.ERROR_SAVING_DATABASE);
@@ -105,7 +107,7 @@ public class Database implements Serializable {
         return token.toString();
     }
 
-    public String deleteUser(String token) throws CompetitionException { //Добавить удаление заявок и оценок!!!
+    public String deleteUser(String token) throws CompetitionException {
         Gson json = new Gson();
         try {
             UUID key = json.fromJson(token, UUID.class);
@@ -228,7 +230,11 @@ public class Database implements Serializable {
                             Map<Application, Integer> map = applicationsWithRating.get(expert);
                             if (map.containsKey(application)) {
                                 map.remove(application);
-                                applicationsWithRating.put(expert, map);
+                                if (map.size() > 0) {
+                                    applicationsWithRating.put(expert, map);
+                                } else {
+                                    applicationsWithRating.remove(expert);
+                                }
                             }
                         }
                     }
@@ -363,9 +369,9 @@ public class Database implements Serializable {
                 if (applicationsWithRating.containsKey(expert)
                         && applicationsWithRating.get(expert).containsKey(application)) {
                     Map<Application, Integer> map = applicationsWithRating.get(expert);
-                    map.replace(application,rating);
+                    map.replace(application, rating);
                     applicationsWithRating.put(expert, map);
-                    return json.toJson("ok");
+                    return "ok";
                 } else {
                     throw new CompetitionException(ErrorCode.RATINGS_NOT_EXIST);
                 }
@@ -387,8 +393,12 @@ public class Database implements Serializable {
                         && applicationsWithRating.get(expert).containsKey(application)) {
                     Map<Application, Integer> map = applicationsWithRating.get(expert);
                     map.remove(application);
-                    applicationsWithRating.put(expert, map);
-                    return json.toJson("ok");
+                    if (map.size() > 0) {
+                        applicationsWithRating.put(expert, map);
+                    } else {
+                        applicationsWithRating.remove(expert);
+                    }
+                    return "ok";
                 } else {
                     throw new CompetitionException(ErrorCode.RATINGS_NOT_EXIST);
                 }
@@ -397,6 +407,71 @@ public class Database implements Serializable {
             }
         } catch (JsonSyntaxException e) {
             throw new CompetitionException(ErrorCode.LOGIN_ERROR);
+        }
+    }
+
+    public String summarize(int fund, int minRate) throws CompetitionException {
+        Gson json = new Gson();
+        if (applicationsWithRating.size() > 0) {
+            Collection<Map<Application, Integer>> mapCollection = applicationsWithRating.values();
+            Collection<Application> collectionApp = applicationWithMember.values();
+            List<String> result = new ArrayList<>();
+            Map<Application, Integer> appSum = new HashMap<>();
+            Map<Application, Integer> appAmount = new HashMap<>();
+            /*Создаем две map для подсчета средней оценки и дальнейшей работы с заявками*/
+            for (Map<Application, Integer> map : mapCollection) { //Перебор карт с заявками
+                for (Application application : collectionApp) {   //Перебор заявок
+                    if (map.containsKey(application)) {
+                        if (appSum.containsKey(application)) {    //Если заявка уже добавлялась, то пересчитываем
+                            int rate = appSum.get(application) + map.get(application);
+                            appSum.replace(application, rate);
+                            int amount = appAmount.get(application) + 1;
+                            appAmount.replace(application, amount);
+                        } else {
+                            appSum.put(application, map.get(application));
+                            appAmount.put(application, 1);
+                        }
+                    }
+                }
+            }
+            Map<Application, Float> mapAverage = new HashMap<>(); //Карта: заявка -> среднее значение
+            float averageRate;
+            for (Application application : collectionApp) {       //Заполняем mapAverage
+                if (appSum.containsKey(application)) {
+                    averageRate = (float) appSum.get(application) / (float) appAmount.get(application);
+                    mapAverage.put(application, averageRate);
+                }
+            }
+            /*Сортировка всех значений в mapAverage*/
+            List<Map.Entry<Application, Float>> sortedAppList = mapAverage.entrySet().stream()
+                    .sorted((e1, e2) -> {
+                        if (e1.getValue().equals(e2.getValue())) { //Если оценки равны, сортируем по запрашиваемой сумме
+                            if (e1.getKey().getAmountRequested() <= e2.getKey().getAmountRequested()) {
+                                return -1;
+                            } else {
+                                return 1;
+                            }
+                        } else {
+                            return -e1.getValue().compareTo(e2.getValue());
+                        }
+                    }).collect(Collectors.toList());
+            boolean error = true;
+            /*Проверка оставшихся условий и формирование результата*/
+            for (Map.Entry<Application, Float> item : sortedAppList) {
+                if (item.getKey().getAmountRequested() <= fund && item.getValue() >= minRate) {
+                    error = false;
+                    fund -= item.getKey().getAmountRequested();
+                    result.add("Выделенная сумма: " + item.getKey().getAmountRequested()
+                            + item.getKey().toString() + " Средняя оценка: " + item.getValue());
+                }
+            }
+            if(error){
+                throw new CompetitionException(ErrorCode.SUMMARIZE_ERROR);
+            } else {
+                return json.toJson(result.toArray());
+            }
+        } else {
+            throw new CompetitionException(ErrorCode.SUMMARIZE_ERROR);
         }
     }
 

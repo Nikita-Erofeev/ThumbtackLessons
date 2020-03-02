@@ -2,6 +2,7 @@ package net.thumbtack.school.competition.service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import net.thumbtack.school.competition.daoimpl.AdminDaoImpl;
 import net.thumbtack.school.competition.daoimpl.ExpertDaoImpl;
 import net.thumbtack.school.competition.daoimpl.MemberDaoImpl;
 import net.thumbtack.school.competition.daoimpl.UserDaoImpl;
@@ -16,11 +17,11 @@ import java.util.List;
 public class UserService {
 
     private boolean validString(String string) {
-        return string != null && !string.equals("") & string.length() >= 2;
+        return string != null && !string.equals("") && string.length() >= 2;
     }
 
     private boolean validApplicationDto(ApplicationDto applicationDto) {
-        return validString(applicationDto.getName()) && validString(applicationDto.getDescription())
+        return applicationDto != null && validString(applicationDto.getName()) && validString(applicationDto.getDescription())
                 && (applicationDto.getAmountRequested() > 1000) && (applicationDto.getSubjectsList().size() > 0);
     }
 
@@ -36,6 +37,14 @@ public class UserService {
             }
         }
         return strings[2].length() >= 4 && strings[3].length() >= 4;
+    }
+
+    public boolean startServer(String savedDataFileName) throws CompetitionException {
+        return new AdminDaoImpl().startServer(savedDataFileName);
+    }
+
+    public boolean stopServer(String savedDataFileName) throws CompetitionException {
+        return new AdminDaoImpl().stopServer(savedDataFileName);
     }
 
     public String registerMember(String requestJsonString) {
@@ -310,7 +319,7 @@ public class UserService {
                 String token = tokenDto.getToken();
                 Application application = new Application(applicationDto);
                 try {
-                    return json.toJson(new DtoResponse(new ExpertDaoImpl().deleteRating(token,application)));
+                    return json.toJson(new DtoResponse(new ExpertDaoImpl().deleteRating(token, application)));
                 } catch (CompetitionException e) {
                     return json.toJson(new DtoError(e.getErrorCode().getErrorString()));
                 }
@@ -321,4 +330,25 @@ public class UserService {
             return json.toJson(new DtoError("invalid request"));
         }
     }
+
+    public String summarize(String summarizeDtoJson) {
+        Gson json = new Gson();
+        try {
+            SummarizeDto summarizeDto = json.fromJson(summarizeDtoJson, SummarizeDto.class);
+            if (summarizeDto.getMinRate() > 0 && summarizeDto.getMinRate() < 6) {
+                try {
+                    return json.toJson(new DtoResponse(new AdminDaoImpl()
+                            .summarize(summarizeDto.getFund(),summarizeDto.getMinRate())));
+                } catch (CompetitionException e) {
+                    return json.toJson(new DtoError(e.getErrorCode().getErrorString()));
+                }
+            } else {
+                return json.toJson(new DtoError("invalid request"));
+            }
+        } catch (JsonSyntaxException e) {
+            return json.toJson(new DtoError("invalid request"));
+        }
+    }
+
+
 }

@@ -11,7 +11,8 @@ public enum  ErrorCode {
     DUPLICATE_APPLICATION("This application already exist"),
     APPLICATION_NOT_EXIST("Such application not exist"),
     RATINGS_NOT_EXIST("There are no rated applications"),
-    INVALID_REQUEST("Invalid request");
+    INVALID_REQUEST("Invalid request"),
+    SUMMARIZE_ERROR("There are no matching entries");
 
     private String errorString;
 
