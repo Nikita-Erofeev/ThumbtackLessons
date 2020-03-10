@@ -3,7 +3,7 @@ package net.thumbtack.school.competition.dto;
 public class DtoError {
     private String error;
 
-    public DtoError(String error){
+    public DtoError(String error) {
         this.error = error;
     }
 

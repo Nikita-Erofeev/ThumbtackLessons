@@ -1,6 +1,6 @@
 package net.thumbtack.school.competition.exceptions;
 
-public enum  ErrorCode {
+public enum ErrorCode {
     ERROR_UPLOAD_DATABASE("Database could not be loaded"),
     ERROR_SAVING_DATABASE("Saving failed, try again"),
     DUPLICATE_USER("This user already exist"),
@@ -16,7 +16,7 @@ public enum  ErrorCode {
 
     private String errorString;
 
-    ErrorCode(String errorString){
+    ErrorCode(String errorString) {
         this.errorString = errorString;
     }
 

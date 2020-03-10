@@ -6,10 +6,10 @@ import java.util.List;
 public class ApplicationDto {
     private String name;
     private String description;
-    private List<String> subjectsList= new ArrayList<>();
+    private List<String> subjectsList = new ArrayList<>();
     private int amountRequested;
 
-    public ApplicationDto(String name, String description, List<String> subjectsList,int amountRequested){
+    public ApplicationDto(String name, String description, List<String> subjectsList, int amountRequested) {
         this.name = name;
         this.description = description;
         this.subjectsList.addAll(subjectsList);

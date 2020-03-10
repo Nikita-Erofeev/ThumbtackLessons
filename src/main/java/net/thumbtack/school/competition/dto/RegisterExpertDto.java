@@ -10,7 +10,7 @@ public class RegisterExpertDto {
     private String login;
     private String password;
 
-    public RegisterExpertDto(String firstName, String lastName, List<String> subjectsList, String login, String password){
+    public RegisterExpertDto(String firstName, String lastName, List<String> subjectsList, String login, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.subjectsList.addAll(subjectsList);

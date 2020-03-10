@@ -3,7 +3,6 @@ package net.thumbtack.school.competition.database;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import net.thumbtack.school.competition.dto.LoginDto;
-import net.thumbtack.school.competition.dto.SummarizeDto;
 import net.thumbtack.school.competition.dto.TokenDtoResponse;
 import net.thumbtack.school.competition.exceptions.CompetitionException;
 import net.thumbtack.school.competition.exceptions.ErrorCode;
@@ -11,7 +10,6 @@ import net.thumbtack.school.competition.model.Application;
 import net.thumbtack.school.competition.model.Expert;
 import net.thumbtack.school.competition.model.Member;
 import net.thumbtack.school.competition.model.User;
-import org.apache.commons.collections4.MapIterator;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 
@@ -21,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class Database implements Serializable {
     private static Database instance;
-    private List<Member> members = new ArrayList<>();
-    private List<Expert> experts = new ArrayList<>();
+    private Set<Member> members = new HashSet<>(); //Для более быстрой работы
+    private Set<Expert> experts = new HashSet<>();
     private MultiValuedMap<Member, Application> applicationWithMember = new ArrayListValuedHashMap<>();
     private Map<Expert, Map<Application, Integer>> applicationsWithRating = new HashMap<>();
     private Map<UUID, User> usersOnline = new HashMap<>();
@@ -86,6 +84,7 @@ public class Database implements Serializable {
         } else {
             throw new CompetitionException(ErrorCode.DUPLICATE_USER);
         }
+
         UUID token = UUID.randomUUID();
         usersOnline.put(token, member);
         return token.toString();
@@ -115,14 +114,14 @@ public class Database implements Serializable {
                 User toDelete = usersOnline.get(key);
                 usersOnline.remove(key, toDelete);
                 if (toDelete.getClass() == Member.class) {
-                    members.remove((Member) toDelete);
+                    members.remove(toDelete);
                     if (applicationWithMember.containsKey(toDelete)) {
                         Collection<Application> appsToDelete = applicationWithMember.get((Member) toDelete);
                         for (Expert expert : experts) {
                             Map<Application, Integer> map = applicationsWithRating.get(expert);
                             for (Application app : appsToDelete) {
                                 if (map.containsKey(app)) {
-                                    map.remove(app, map.get(app));
+                                    map.remove(app, map.get(app)); // Никак не могу придумать, как упростить
                                 }
                             }
                             applicationsWithRating.put(expert, map);
@@ -217,6 +216,22 @@ public class Database implements Serializable {
         }
     }
 
+    private void deleteAppFromAppWithRating(Application application) {
+        for (Expert expert : experts) {
+            if (applicationsWithRating.containsKey(expert)) {
+                Map<Application, Integer> map = applicationsWithRating.get(expert);
+                if (map.containsKey(application)) {
+                    map.remove(application);
+                    if (map.size() > 0) {
+                        applicationsWithRating.put(expert, map);
+                    } else {
+                        applicationsWithRating.remove(expert);
+                    }
+                }
+            }
+        }
+    }
+
     public String memberDeleteApplication(String token, Application application) throws CompetitionException {
         Gson json = new Gson();
         try {
@@ -225,19 +240,7 @@ public class Database implements Serializable {
                 Member member = (Member) usersOnline.get(key);
                 if (applicationWithMember.containsMapping(member, application)) {
                     applicationWithMember.removeMapping(member, application);
-                    for (Expert expert : experts) {
-                        if (applicationsWithRating.containsKey(expert)) {
-                            Map<Application, Integer> map = applicationsWithRating.get(expert);
-                            if (map.containsKey(application)) {
-                                map.remove(application);
-                                if (map.size() > 0) {
-                                    applicationsWithRating.put(expert, map);
-                                } else {
-                                    applicationsWithRating.remove(expert);
-                                }
-                            }
-                        }
-                    }
+                    deleteAppFromAppWithRating(application);
                     return "application deleted";
                 } else {
                     throw new CompetitionException(ErrorCode.APPLICATION_NOT_EXIST);
@@ -258,9 +261,7 @@ public class Database implements Serializable {
                 Expert expert = (Expert) usersOnline.get(key);
                 List<Application> result = new ArrayList<>();
                 Collection<Application> collection = applicationWithMember.values();
-                Iterator<Application> iterator = collection.iterator();
-                while (iterator.hasNext()) {
-                    Application app = iterator.next();
+                for (Application app : collection) {
                     if (sameLists(app.getSubjectsList(), expert.getSubjectsList())) {
                         result.add(app);
                     }
@@ -289,9 +290,7 @@ public class Database implements Serializable {
                 }
                 List<Application> result = new ArrayList<>();
                 Collection<Application> collection = applicationWithMember.values();
-                Iterator<Application> iterator = collection.iterator();
-                while (iterator.hasNext()) {
-                    Application app = iterator.next();
+                for (Application app : collection) {
                     if (sameLists(app.getSubjectsList(), subjects)) {
                         result.add(app);
                     }
@@ -410,15 +409,44 @@ public class Database implements Serializable {
         }
     }
 
-    public String summarize(int fund, int minRate) throws CompetitionException {
-        Gson json = new Gson();
+    private List<Map.Entry<Application, Float>> sortMapAppFloat(Map<Application, Float> mapAverage) {
+        return mapAverage.entrySet().stream()
+                .sorted((e1, e2) -> {
+                    if (e1.getValue().equals(e2.getValue())) { //Если оценки равны, сортируем по запрашиваемой сумме
+                        if (e1.getKey().getAmountRequested() <= e2.getKey().getAmountRequested()) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    } else {
+                        return -e1.getValue().compareTo(e2.getValue());
+                    }
+                }).collect(Collectors.toList());
+    }
+
+    private Map<Application, Float> generateMapAverage(Collection<Application> collectionApp,
+                                                       Map<Application, Integer> appSum,
+                                                       Map<Application, Integer> appAmount) {
+        Map<Application, Float> mapAverage = new HashMap<>(); //Карта: заявка -> среднее значение
+        float averageRate;
+        for (Application application : collectionApp) {       //Заполняем mapAverage
+            if (appSum.containsKey(application)) {
+                averageRate = (float) appSum.get(application) / (float) appAmount.get(application);
+                mapAverage.put(application, averageRate);
+            }
+        }
+        return mapAverage;
+    }
+
+
+    public List<Map.Entry<Application, Float>> summarize() throws CompetitionException {
         if (applicationsWithRating.size() > 0) {
             Collection<Map<Application, Integer>> mapCollection = applicationsWithRating.values();
             Collection<Application> collectionApp = applicationWithMember.values();
-            List<String> result = new ArrayList<>();
             Map<Application, Integer> appSum = new HashMap<>();
             Map<Application, Integer> appAmount = new HashMap<>();
             /*Создаем две map для подсчета средней оценки и дальнейшей работы с заявками*/
+            /*Так же, нет идей как упростить*/
             for (Map<Application, Integer> map : mapCollection) { //Перебор карт с заявками
                 for (Application application : collectionApp) {   //Перебор заявок
                     if (map.containsKey(application)) {
@@ -434,42 +462,8 @@ public class Database implements Serializable {
                     }
                 }
             }
-            Map<Application, Float> mapAverage = new HashMap<>(); //Карта: заявка -> среднее значение
-            float averageRate;
-            for (Application application : collectionApp) {       //Заполняем mapAverage
-                if (appSum.containsKey(application)) {
-                    averageRate = (float) appSum.get(application) / (float) appAmount.get(application);
-                    mapAverage.put(application, averageRate);
-                }
-            }
-            /*Сортировка всех значений в mapAverage*/
-            List<Map.Entry<Application, Float>> sortedAppList = mapAverage.entrySet().stream()
-                    .sorted((e1, e2) -> {
-                        if (e1.getValue().equals(e2.getValue())) { //Если оценки равны, сортируем по запрашиваемой сумме
-                            if (e1.getKey().getAmountRequested() <= e2.getKey().getAmountRequested()) {
-                                return -1;
-                            } else {
-                                return 1;
-                            }
-                        } else {
-                            return -e1.getValue().compareTo(e2.getValue());
-                        }
-                    }).collect(Collectors.toList());
-            boolean error = true;
-            /*Проверка оставшихся условий и формирование результата*/
-            for (Map.Entry<Application, Float> item : sortedAppList) {
-                if (item.getKey().getAmountRequested() <= fund && item.getValue() >= minRate) {
-                    error = false;
-                    fund -= item.getKey().getAmountRequested();
-                    result.add("Выделенная сумма: " + item.getKey().getAmountRequested()
-                            + item.getKey().toString() + " Средняя оценка: " + item.getValue());
-                }
-            }
-            if(error){
-                throw new CompetitionException(ErrorCode.SUMMARIZE_ERROR);
-            } else {
-                return json.toJson(result.toArray());
-            }
+            Map<Application, Float> mapAverage = generateMapAverage(collectionApp, appSum, appAmount);
+            return sortMapAppFloat(mapAverage);
         } else {
             throw new CompetitionException(ErrorCode.SUMMARIZE_ERROR);
         }

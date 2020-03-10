@@ -4,7 +4,7 @@ public class SummarizeDto {
     private int fund;
     private int minRate;
 
-    public SummarizeDto(int fund, int minRate){
+    public SummarizeDto(int fund, int minRate) {
         this.fund = fund;
         this.minRate = minRate;
     }

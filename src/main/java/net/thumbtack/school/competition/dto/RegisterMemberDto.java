@@ -7,7 +7,7 @@ public class RegisterMemberDto {
     private String login;
     private String password;
 
-    public RegisterMemberDto(String firstName, String lastName, String companyName, String login, String password){
+    public RegisterMemberDto(String firstName, String lastName, String companyName, String login, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.companyName = companyName;

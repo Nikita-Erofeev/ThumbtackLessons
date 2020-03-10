@@ -1,6 +1,5 @@
 package net.thumbtack.school.competition.dao;
 
-import net.thumbtack.school.competition.dto.SummarizeDto;
 import net.thumbtack.school.competition.exceptions.CompetitionException;
 
 public interface AdminDao {
