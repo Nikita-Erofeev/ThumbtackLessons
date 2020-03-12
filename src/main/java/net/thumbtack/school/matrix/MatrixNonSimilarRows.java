@@ -1,6 +1,9 @@
 package net.thumbtack.school.matrix;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class MatrixNonSimilarRows {
     private int rows;
@@ -28,9 +31,9 @@ public class MatrixNonSimilarRows {
         boolean forNull = false;
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < copyMatrix.length; j++) {
-                if (i != j && copyMatrix[j]!=null) {
-                    if(isSimilarRow(matrix[i],copyMatrix[j])){
-                        if(j<i){
+                if (i != j && copyMatrix[j] != null) {
+                    if (isSimilarRow(matrix[i], copyMatrix[j])) {
+                        if (j < i) {
                             copyMatrix[j] = matrix[i];
                         } else {
                             copyMatrix[j] = null;
@@ -39,17 +42,17 @@ public class MatrixNonSimilarRows {
                 }
             }
         }
-        for (int[] item:matrix) {
-            if(item == null){
+        for (int[] item : matrix) {
+            if (item == null) {
                 forNull = true;
             }
         }
-        for (int[] item:copyMatrix) {
-            if(forNull){
+        for (int[] item : copyMatrix) {
+            if (forNull) {
                 result.add(null);
                 forNull = false;
             }
-            if(item != null){
+            if (item != null) {
                 result.add(item);
             }
         }

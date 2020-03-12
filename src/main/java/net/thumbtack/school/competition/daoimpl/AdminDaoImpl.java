@@ -14,21 +14,8 @@ import java.util.Map;
 public class AdminDaoImpl implements AdminDao {
     private Database database;
 
-    public AdminDaoImpl() {
-    }
-
     public AdminDaoImpl(Database database) {
         this.database = database;
-    }
-
-    @Override
-    public boolean startServer(String savedDataFileName) throws CompetitionException {
-        return Database.uploadDatabase(savedDataFileName);
-    }
-
-    @Override
-    public boolean stopServer(String savedDataFileName) throws CompetitionException {
-        return Database.saveDatabase(savedDataFileName);
     }
 
     @Override

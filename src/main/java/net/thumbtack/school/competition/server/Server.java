@@ -16,12 +16,11 @@ public class Server {
     private UserService userService;
     private MemberService memberService;
     private ExpertService expertService;
+    private Gson json = new Gson();
 
     public String startServer(String savedDataFileName) {
-        Gson json = new Gson();
         try {
-            userService = new UserService();
-            run = userService.startServer(savedDataFileName);
+            run = Database.uploadDatabase(savedDataFileName);
             Database database = Database.getInstance();
             userService = new UserService(database);
             memberService = new MemberService(database);
@@ -34,9 +33,8 @@ public class Server {
     }
 
     public String stopServer(String savedDataFileName) {
-        Gson json = new Gson();
         try {
-            run = !userService.stopServer(savedDataFileName);
+            run = !Database.saveDatabase(savedDataFileName);
             return json.toJson(new DtoResponse("Database saved"));
         } catch (CompetitionException e) {
             return json.toJson(new DtoError(e.getErrorCode().getErrorString()));
@@ -44,7 +42,6 @@ public class Server {
     }
 
     public String registerMember(String requestJsonString) {
-        Gson json = new Gson();
         if (run) {
             return memberService.registerMember(requestJsonString);
         }
@@ -52,7 +49,6 @@ public class Server {
     }
 
     public String registerExpert(String requestJsonString) {
-        Gson json = new Gson();
         if (run) {
             return expertService.registerExpert(requestJsonString);
         }
@@ -60,7 +56,6 @@ public class Server {
     }
 
     public String deleteUser(String token) {
-        Gson json = new Gson();
         if (run) {
             return userService.deleteUser(token);
         }
@@ -68,7 +63,6 @@ public class Server {
     }
 
     public String loginUser(String loginDtoJson) {
-        Gson json = new Gson();
         if (run) {
             return userService.login(loginDtoJson);
         }
@@ -76,7 +70,6 @@ public class Server {
     }
 
     public String logoutUser(String tokenJsonDtoResponse) {
-        Gson json = new Gson();
         if (run) {
             return userService.logout(tokenJsonDtoResponse);
         }
@@ -84,7 +77,6 @@ public class Server {
     }
 
     public String addApplication(String token, String appJsonDto) {
-        Gson json = new Gson();
         if (run) {
             return memberService.addApplication(token, appJsonDto);
         }
@@ -93,7 +85,6 @@ public class Server {
 
     /*Перегруженный метод, который обращается к одному и тому же методу класса UserService*/
     public String addApplication(String token, String[] appJsonDto) {
-        Gson json = new Gson();
         String[] errors = new String[appJsonDto.length];
         StringBuilder response = new StringBuilder();
         boolean anyErrors = false;
@@ -122,7 +113,6 @@ public class Server {
     }
 
     public String memberShowApplications(String tokenDtoJson) {
-        Gson json = new Gson();
         if (run) {
             return memberService.memberShowApplications(tokenDtoJson);
         }
@@ -130,7 +120,6 @@ public class Server {
     }
 
     public String memberDeleteApplication(String tokenDtoJson, String appJsonDto) {
-        Gson json = new Gson();
         if (run) {
             return memberService.memberDeleteApplication(tokenDtoJson, appJsonDto);
         }
@@ -138,7 +127,6 @@ public class Server {
     }
 
     public String expertShowApplications(String tokenDtoJson) {
-        Gson json = new Gson();
         if (run) {
             return expertService.expertShowApplications(tokenDtoJson);
         }
@@ -146,7 +134,6 @@ public class Server {
     }
 
     public String expertShowApplications(String tokenDtoJson, List<String> subjects) {
-        Gson json = new Gson();
         if (run) {
             return expertService.expertShowApplications(tokenDtoJson, subjects);
         }
@@ -154,7 +141,6 @@ public class Server {
     }
 
     public String rateApplication(String tokenDtoJson, String applicationDtoJson, int rating) {
-        Gson json = new Gson();
         if (run) {
             return expertService.rateApplication(tokenDtoJson, applicationDtoJson, rating);
         }
@@ -162,7 +148,6 @@ public class Server {
     }
 
     public String showRatedApplications(String tokenDtoJson) {
-        Gson json = new Gson();
         if (run) {
             return expertService.showRatedApplications(tokenDtoJson);
         }
@@ -170,7 +155,6 @@ public class Server {
     }
 
     public String changeRating(String tokenDtoJson, String applicationDtoJson, int rating) {
-        Gson json = new Gson();
         if (run) {
             return expertService.changeRating(tokenDtoJson, applicationDtoJson, rating);
         }
@@ -178,7 +162,6 @@ public class Server {
     }
 
     public String deleteRating(String tokenDtoJson, String applicationDtoJson) {
-        Gson json = new Gson();
         if (run) {
             return expertService.deleteRating(tokenDtoJson, applicationDtoJson);
         }
@@ -186,7 +169,6 @@ public class Server {
     }
 
     public String summarize(String summarizeDtoJson) {
-        Gson json = new Gson();
         if (run) {
             return userService.summarize(summarizeDtoJson);
         }

@@ -12,10 +12,6 @@ public class UserService {
     private AdminDaoImpl adminDao;
     private UserDaoImpl userDao;
 
-    public UserService() {
-        adminDao = new AdminDaoImpl();
-    }
-
     public UserService(Database database) {
         adminDao = new AdminDaoImpl(database);
         userDao = new UserDaoImpl(database);
@@ -42,14 +38,6 @@ public class UserService {
             }
         }
         return strings[2].length() >= 4 && strings[3].length() >= 4;
-    }
-
-    public boolean startServer(String savedDataFileName) throws CompetitionException {
-        return adminDao.startServer(savedDataFileName);
-    }
-
-    public boolean stopServer(String savedDataFileName) throws CompetitionException {
-        return adminDao.stopServer(savedDataFileName);
     }
 
     public String deleteUser(String tokenJson) {

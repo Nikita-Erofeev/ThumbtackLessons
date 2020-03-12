@@ -24,6 +24,7 @@ public class Database implements Serializable {
     private MultiValuedMap<Member, Application> applicationWithMember = new ArrayListValuedHashMap<>();
     private Map<Expert, Map<Application, Integer>> applicationsWithRating = new HashMap<>();
     private Map<UUID, User> usersOnline = new HashMap<>();
+    transient private Gson json = new Gson();
 
     private Database() {
     }
@@ -107,7 +108,6 @@ public class Database implements Serializable {
     }
 
     public String deleteUser(String token) throws CompetitionException {
-        Gson json = new Gson();
         try {
             UUID key = json.fromJson(token, UUID.class);
             if (usersOnline.containsKey(key)) {
@@ -129,7 +129,7 @@ public class Database implements Serializable {
                         applicationWithMember.remove(toDelete);
                     }
                 } else {
-                    experts.remove((Expert) toDelete);
+                    experts.remove(toDelete);
                     applicationsWithRating.remove(toDelete);
                 }
             } else {
@@ -166,7 +166,6 @@ public class Database implements Serializable {
     }
 
     public String logout(String token) throws CompetitionException {
-        Gson json = new Gson();
         try {
             UUID key = json.fromJson(token, UUID.class);
             if (usersOnline.containsKey(key)) {
@@ -181,7 +180,6 @@ public class Database implements Serializable {
     }
 
     public String insertApplication(TokenDtoResponse tokenDto, Application application) throws CompetitionException {
-        Gson json = new Gson();
         try {
             UUID token = json.fromJson(tokenDto.getToken(), UUID.class);
             if (usersOnline.containsKey(token) && usersOnline.get(token) instanceof Member) {
@@ -201,7 +199,6 @@ public class Database implements Serializable {
     }
 
     public String memberShowApplications(TokenDtoResponse tokenDto) throws CompetitionException {
-        Gson json = new Gson();
         try {
             UUID token = json.fromJson(tokenDto.getToken(), UUID.class);
             if (usersOnline.containsKey(token)) {
@@ -233,7 +230,6 @@ public class Database implements Serializable {
     }
 
     public String memberDeleteApplication(String token, Application application) throws CompetitionException {
-        Gson json = new Gson();
         try {
             UUID key = json.fromJson(token, UUID.class);
             if (usersOnline.containsKey(key)) {
@@ -254,7 +250,6 @@ public class Database implements Serializable {
     }
 
     public String expertShowApplications(String token) throws CompetitionException {
-        Gson json = new Gson();
         try {
             UUID key = json.fromJson(token, UUID.class);
             if (usersOnline.containsKey(key)) {
@@ -280,7 +275,6 @@ public class Database implements Serializable {
     }
 
     public String expertShowApplications(String token, List<String> subjects) throws CompetitionException {
-        Gson json = new Gson();
         try {
             UUID key = json.fromJson(token, UUID.class);
             if (usersOnline.containsKey(key)) {
@@ -309,7 +303,6 @@ public class Database implements Serializable {
     }
 
     public String rateApplication(String token, Application application, int rating) throws CompetitionException {
-        Gson json = new Gson();
         try {
             UUID key = json.fromJson(token, UUID.class);
             if (usersOnline.containsKey(key)) {
@@ -335,7 +328,6 @@ public class Database implements Serializable {
     }
 
     public String showRatedApplications(String token) throws CompetitionException {
-        Gson json = new Gson();
         try {
             UUID key = json.fromJson(token, UUID.class);
             if (usersOnline.containsKey(key)) {
@@ -360,7 +352,6 @@ public class Database implements Serializable {
     }
 
     public String changeRating(String token, Application application, int rating) throws CompetitionException {
-        Gson json = new Gson();
         try {
             UUID key = json.fromJson(token, UUID.class);
             if (usersOnline.containsKey(key)) {
@@ -383,7 +374,6 @@ public class Database implements Serializable {
     }
 
     public String deleteRating(String token, Application application) throws CompetitionException {
-        Gson json = new Gson();
         try {
             UUID key = json.fromJson(token, UUID.class);
             if (usersOnline.containsKey(key)) {
