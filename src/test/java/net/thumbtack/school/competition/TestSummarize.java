@@ -105,17 +105,18 @@ public class TestSummarize {
         assertEquals(55, server.rateApplication(tokenExpert3, json.toJson(app8), 5).length());
         assertEquals(55, server.rateApplication(tokenExpert3, json.toJson(app9), 3).length());
 
-        SummarizeDto summarizeDto1 = new SummarizeDto(180000,3);
-        SummarizeDto summarizeDto2 = new SummarizeDto(130000,3);
-        SummarizeDto summarizeDto3 = new SummarizeDto(100000,5);
-        SummarizeDto summarizeDto4 = new SummarizeDto(10000,1);
-        SummarizeDto summarizeDto5 = new SummarizeDto(1,1);
-        SummarizeDto summarizeDto6 = new SummarizeDto(0,0);
-        assertEquals(591,server.summarize(json.toJson(summarizeDto1)).length());
-        assertEquals(361,server.summarize(json.toJson(summarizeDto2)).length());
-        assertEquals("{\"error\":\"There are no matching entries\"}",server.summarize(json.toJson(summarizeDto3)));
-        assertEquals(131,server.summarize(json.toJson(summarizeDto4)).length());
-        assertEquals("{\"error\":\"There are no matching entries\"}",server.summarize(json.toJson(summarizeDto5)));
-        assertEquals("{\"error\":\"invalid request\"}",server.summarize(json.toJson(summarizeDto6)));
+        SummarizeDto summarizeDto1 = new SummarizeDto(180000, 3);
+        SummarizeDto summarizeDto2 = new SummarizeDto(130000, 3);
+        SummarizeDto summarizeDto3 = new SummarizeDto(100000, 5);
+        SummarizeDto summarizeDto4 = new SummarizeDto(10000, 1);
+        SummarizeDto summarizeDto5 = new SummarizeDto(1, 1);
+        SummarizeDto summarizeDto6 = new SummarizeDto(0, 0);
+
+        assertEquals(591, server.summarize(json.toJson(summarizeDto1)).length());
+        assertEquals(361, server.summarize(json.toJson(summarizeDto2)).length());
+        assertEquals("{\"error\":\"There are no matching entries\"}", server.summarize(json.toJson(summarizeDto3)));
+        assertEquals(131, server.summarize(json.toJson(summarizeDto4)).length());
+        assertEquals("{\"error\":\"There are no matching entries\"}", server.summarize(json.toJson(summarizeDto5)));
+        assertEquals("{\"error\":\"invalid request\"}", server.summarize(json.toJson(summarizeDto6)));
     }
 }
