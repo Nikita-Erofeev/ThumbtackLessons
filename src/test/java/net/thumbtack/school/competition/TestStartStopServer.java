@@ -12,14 +12,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TestStartStopServer {
-    private ApplicationDto app1, app2, app3, app4;
-    private String tokenMember1, tokenMember2, tokenExpert1, tokenExpert2;
+    private static String tokenMember1, tokenMember2, tokenExpert1, tokenExpert2;
     private Gson json = new Gson();
     private Server server = new Server();
 
-    @BeforeEach
-    void setUp() {
-        server.startServer(null);
+    private void prepareToSave() {
         RegisterMemberDto member1 = new RegisterMemberDto("Member1", "Member11",
                 "ООО \"Member\"", "member1", "member1");
         RegisterMemberDto member2 = new RegisterMemberDto("Member2", "Member22",
@@ -34,46 +31,47 @@ class TestStartStopServer {
                 "expert1", "123456");
         RegisterExpertDto expert2 = new RegisterExpertDto("Эксперт2", "Эксперт", subjects2,
                 "expert2", "654321");
-        app1 = new ApplicationDto("Грант member1", "Описание гранта 1",
+        ApplicationDto app1 = new ApplicationDto("Грант member1", "Описание гранта 1",
                 subjects1, 10000);
-        app2 = new ApplicationDto("Грант member1", "Описание гранта 2",
+        ApplicationDto app2 = new ApplicationDto("Грант member1", "Описание гранта 2",
                 subjects2, 20000);
-        app3 = new ApplicationDto("Грант member2", "3 Описание гранта",
+        ApplicationDto app3 = new ApplicationDto("Грант member2", "3 Описание гранта",
                 subjects1, 30000);
-        app4 = new ApplicationDto("Грант member2", "4 Описание гранта",
+        ApplicationDto app4 = new ApplicationDto("Грант member2", "4 Описание гранта",
                 subjects2, 40000);
+
+        server.startServer(null);
+
         tokenMember1 = server.registerMember(json.toJson(member1));
         tokenMember2 = server.registerMember(json.toJson(member2));
         tokenExpert1 = server.registerExpert(json.toJson(expert1));
         tokenExpert2 = server.registerExpert(json.toJson(expert2));
+
+        server.addApplication(tokenMember1, json.toJson(app1));
+        server.addApplication(tokenMember1, json.toJson(app2));
+        server.addApplication(tokenMember2, json.toJson(app3));
+        server.addApplication(tokenMember2, json.toJson(app4));
+        server.rateApplication(tokenExpert1, json.toJson(app1), 3);
+        server.rateApplication(tokenExpert1, json.toJson(app3), 1);
+        server.rateApplication(tokenExpert2, json.toJson(app2), 5);
+        server.rateApplication(tokenExpert2, json.toJson(app4), 5);
     }
 
     @Test
     void testStopServer() {
-        assertEquals("{\"response\":\"ok\"}", server.addApplication(tokenMember1, json.toJson(app1)));
-        assertEquals("{\"response\":\"ok\"}", server.addApplication(tokenMember1, json.toJson(app2)));
-        assertEquals("{\"response\":\"ok\"}", server.addApplication(tokenMember2, json.toJson(app3)));
-        assertEquals("{\"response\":\"ok\"}", server.addApplication(tokenMember2, json.toJson(app4)));
-        assertEquals(51, server.rateApplication(tokenExpert1, json.toJson(app1), 3).length());
-        assertEquals(51, server.rateApplication(tokenExpert1, json.toJson(app3), 1).length());
-        assertEquals(51, server.rateApplication(tokenExpert2, json.toJson(app2), 5).length());
-        assertEquals(51, server.rateApplication(tokenExpert2, json.toJson(app4), 5).length());
-
+        prepareToSave();
         /*Данные ниже нужны для сравнения*/
         assertEquals(303, server.memberShowApplications(tokenMember1).length());
         assertEquals(303, server.memberShowApplications(tokenMember2).length());
         assertEquals(148, server.showRatedApplications(tokenExpert1).length());
         assertEquals(170, server.showRatedApplications(tokenExpert2).length());
-
         assertEquals("{\"response\":\"Database saved\"}", server.stopServer("database"));
-        assertEquals("{\"error\":\"Database is not available\"}", server.memberDeleteApplication(tokenMember1,
-                json.toJson(app1)));
     }
 
     @Test
     void testStartServer() {
-        testStopServer();
         assertEquals("{\"response\":\"Database uploaded\"}", server.startServer("database"));
+
         /*Проверка наличия авторизированних пользователей*/
         assertEquals("{\"error\":\"Wrong user profile\"}", server.memberShowApplications(tokenMember1));
         assertEquals("{\"error\":\"Wrong user profile\"}", server.showRatedApplications(tokenExpert1));
@@ -83,6 +81,7 @@ class TestStartStopServer {
         String newTokenMember2 = server.loginUser(json.toJson(new LoginDto("member2", "member2")));
         String newTokenExpert1 = server.loginUser(json.toJson(new LoginDto("expert1", "123456")));
         String newTokenExpert2 = server.loginUser(json.toJson(new LoginDto("expert2", "654321")));
+
         assertEquals(303, server.memberShowApplications(newTokenMember1).length());
         assertEquals(303, server.memberShowApplications(newTokenMember2).length());
         assertEquals(148, server.showRatedApplications(newTokenExpert1).length());
