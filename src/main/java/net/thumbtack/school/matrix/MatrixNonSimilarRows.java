@@ -31,13 +31,11 @@ public class MatrixNonSimilarRows {
         boolean forNull = false;
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < copyMatrix.length; j++) {
-                if (i != j && copyMatrix[j] != null) {
-                    if (isSimilarRow(matrix[i], copyMatrix[j])) {
-                        if (j < i) {
-                            copyMatrix[j] = matrix[i];
-                        } else {
-                            copyMatrix[j] = null;
-                        }
+                if (i != j && copyMatrix[j] != null && isSimilarRow(matrix[i], copyMatrix[j])) {
+                    if (j < i) {
+                        copyMatrix[j] = matrix[i];
+                    } else {
+                        copyMatrix[j] = null;
                     }
                 }
             }

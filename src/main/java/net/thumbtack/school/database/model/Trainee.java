@@ -38,6 +38,10 @@ public class Trainee implements Serializable {
         this.rating = rating;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

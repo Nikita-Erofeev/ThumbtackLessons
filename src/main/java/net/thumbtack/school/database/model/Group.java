@@ -49,6 +49,18 @@ public class Group {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setSubjects(List<Subject> subjects) {
+        this.subjects = subjects;
+    }
+
+    public void setTrainees(List<Trainee> trainees) {
+        this.trainees = trainees;
+    }
+
     public String getRoom() {
         return room;
     }
