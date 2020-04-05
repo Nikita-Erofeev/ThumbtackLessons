@@ -36,18 +36,18 @@ public class Subject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Subject)) return false;
 
         Subject subject = (Subject) o;
 
-        if (id != subject.id) return false;
-        return name != null ? name.equals(subject.name) : subject.name == null;
+        if (getId() != subject.getId()) return false;
+        return getName() != null ? getName().equals(subject.getName()) : subject.getName() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        int result = getId();
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
         return result;
     }
 }

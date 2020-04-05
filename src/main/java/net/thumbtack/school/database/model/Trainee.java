@@ -67,20 +67,23 @@ public class Trainee implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Trainee)) return false;
 
         Trainee trainee = (Trainee) o;
 
-        if (rating != trainee.rating) return false;
-        if (firstName != null ? !firstName.equals(trainee.firstName) : trainee.firstName != null) return false;
-        return lastName != null ? lastName.equals(trainee.lastName) : trainee.lastName == null;
+        if (getId() != trainee.getId()) return false;
+        if (getRating() != trainee.getRating()) return false;
+        if (getFirstName() != null ? !getFirstName().equals(trainee.getFirstName()) : trainee.getFirstName() != null)
+            return false;
+        return getLastName() != null ? getLastName().equals(trainee.getLastName()) : trainee.getLastName() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = firstName != null ? firstName.hashCode() : 0;
-        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
-        result = 31 * result + rating;
+        int result = getId();
+        result = 31 * result + (getFirstName() != null ? getFirstName().hashCode() : 0);
+        result = 31 * result + (getLastName() != null ? getLastName().hashCode() : 0);
+        result = 31 * result + getRating();
         return result;
     }
 }

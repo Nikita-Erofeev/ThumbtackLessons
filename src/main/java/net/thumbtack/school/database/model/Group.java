@@ -73,6 +73,10 @@ public class Group {
         return trainees;
     }
 
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
+
     public void addTrainee(Trainee trainee) {
         trainees.add(trainee);
     }
@@ -92,20 +96,25 @@ public class Group {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Group)) return false;
 
         Group group = (Group) o;
 
-        if (name != null ? !name.equals(group.name) : group.name != null) return false;
-        if (room != null ? !room.equals(group.room) : group.room != null) return false;
-        return trainees != null ? trainees.equals(group.trainees) : group.trainees == null;
+        if (getId() != group.getId()) return false;
+        if (getName() != null ? !getName().equals(group.getName()) : group.getName() != null) return false;
+        if (getRoom() != null ? !getRoom().equals(group.getRoom()) : group.getRoom() != null) return false;
+        if (getTrainees() != null ? !getTrainees().equals(group.getTrainees()) : group.getTrainees() != null)
+            return false;
+        return getSubjects() != null ? getSubjects().equals(group.getSubjects()) : group.getSubjects() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (room != null ? room.hashCode() : 0);
-        result = 31 * result + (trainees != null ? trainees.hashCode() : 0);
+        int result = getId();
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        result = 31 * result + (getRoom() != null ? getRoom().hashCode() : 0);
+        result = 31 * result + (getTrainees() != null ? getTrainees().hashCode() : 0);
+        result = 31 * result + (getSubjects() != null ? getSubjects().hashCode() : 0);
         return result;
     }
 }

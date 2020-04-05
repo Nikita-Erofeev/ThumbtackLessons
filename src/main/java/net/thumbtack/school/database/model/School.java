@@ -76,20 +76,22 @@ public class School {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof School)) return false;
 
         School school = (School) o;
 
-        if (year != school.year) return false;
-        if (name != null ? !name.equals(school.name) : school.name != null) return false;
-        return groups != null ? groups.equals(school.groups) : school.groups == null;
+        if (getId() != school.getId()) return false;
+        if (getYear() != school.getYear()) return false;
+        if (getName() != null ? !getName().equals(school.getName()) : school.getName() != null) return false;
+        return getGroups() != null ? getGroups().equals(school.getGroups()) : school.getGroups() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + year;
-        result = 31 * result + (groups != null ? groups.hashCode() : 0);
+        int result = getId();
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        result = 31 * result + getYear();
+        result = 31 * result + (getGroups() != null ? getGroups().hashCode() : 0);
         return result;
     }
 }
