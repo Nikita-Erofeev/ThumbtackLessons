@@ -54,11 +54,9 @@ public class Trainee implements Serializable {
         return lastName;
     }
 
-
     public int getRating() {
         return rating;
     }
-
 
     public String getFullName() {
         return firstName + " " + lastName;

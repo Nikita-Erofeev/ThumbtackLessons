@@ -13,12 +13,13 @@ public class JdbcService {
     private static Connection connection = JdbcUtils.getConnection();
 
     public static void insertTrainee(Trainee trainee) throws SQLException {
-        String insertQuery = "INSERT INTO trainee VALUES (?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO trainee VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setNull(1, Types.INTEGER);
-            preparedStatement.setString(2, trainee.getFirstName());
-            preparedStatement.setString(3, trainee.getLastName());
-            preparedStatement.setInt(4, trainee.getRating());
+            preparedStatement.setNull(2, Types.INTEGER);
+            preparedStatement.setString(3, trainee.getFirstName());
+            preparedStatement.setString(4, trainee.getLastName());
+            preparedStatement.setInt(5, trainee.getRating());
             trainee.setId(preparedStatement.executeUpdate());
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -29,24 +30,16 @@ public class JdbcService {
     }
 
     public static void insertTrainee(Trainee trainee, Group group) throws SQLException {
-        String insertGroup = "INSERT INTO trainee VALUES (?,?,?,?)";
-        String selectId = "SELECT @traineeId := LAST_INSERT_ID()";
-        String insertConn = "INSERT INTO trainee_group VALUES (null,?,@traineeId)";
-        connection.setAutoCommit(false);
-        try (PreparedStatement query1 = connection.prepareStatement(insertGroup, Statement.RETURN_GENERATED_KEYS);
-             PreparedStatement query2 = connection.prepareStatement(selectId);
-             PreparedStatement query3 = connection.prepareStatement(insertConn)) {
-            query1.setNull(1,Types.INTEGER);
-            query1.setString(2,trainee.getFirstName());
-            query1.setString(3,trainee.getLastName());
-            query1.setInt(4, trainee.getRating());
-            query1.execute();
-            query2.execute();
-            query3.setInt(1,group.getId());
-            query3.execute();
-            connection.commit();
-            try (ResultSet generatedKey = query1.getGeneratedKeys()) {
-                if(generatedKey.next()){
+        String insertGroup = "INSERT INTO trainee VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(insertGroup, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, group.getId());
+            stmt.setNull(2, Types.INTEGER);
+            stmt.setString(3, trainee.getFirstName());
+            stmt.setString(4, trainee.getLastName());
+            stmt.setInt(5, trainee.getRating());
+            stmt.execute();
+            try (ResultSet generatedKey = stmt.getGeneratedKeys()) {
+                if (generatedKey.next()) {
                     trainee.setId(generatedKey.getInt(1));
                 }
             }
@@ -86,10 +79,10 @@ public class JdbcService {
             preparedStatement.setInt(1, traineeId);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                int id = resultSet.getInt(1);
-                String firstname = resultSet.getString(2);
-                String lastname = resultSet.getString(3);
-                int rating = resultSet.getInt(4);
+                int id = resultSet.getInt(2);
+                String firstname = resultSet.getString(3);
+                String lastname = resultSet.getString(4);
+                int rating = resultSet.getInt(5);
                 return new Trainee(id, firstname, lastname, rating);
             }
             return null;
@@ -118,10 +111,10 @@ public class JdbcService {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Trainee> resultList = new ArrayList<>();
             while (resultSet.next()) {
-                int id = resultSet.getInt(1);
-                String firstname = resultSet.getString(2);
-                String lastname = resultSet.getString(3);
-                int rating = resultSet.getInt(4);
+                int id = resultSet.getInt(2);
+                String firstname = resultSet.getString(3);
+                String lastname = resultSet.getString(4);
+                int rating = resultSet.getInt(5);
                 resultList.add(new Trainee(id, firstname, lastname, rating));
             }
             return resultList;
@@ -254,34 +247,24 @@ public class JdbcService {
     }
 
     public static void insertGroup(School school, Group group) throws SQLException {
-        String insertGroup = "INSERT INTO groups VALUES (?,?,?)";
-        String selectId = "SELECT @groupid := LAST_INSERT_ID()";
-        String insertConn = "INSERT INTO school_group VALUES (null,?,@groupid)";
-        connection.setAutoCommit(false);
-        try (PreparedStatement query1 = connection.prepareStatement(insertGroup, Statement.RETURN_GENERATED_KEYS);
-                PreparedStatement query2 = connection.prepareStatement(selectId);
-                PreparedStatement query3 = connection.prepareStatement(insertConn)) {
-            query1.setNull(1,Types.INTEGER);
-            query1.setString(2,group.getName());
-            query1.setString(3,group.getRoom());
-            query1.execute();
-            query2.execute();
-            query3.setInt(1,school.getId());
-            query3.execute();
-            connection.commit();
-            try (ResultSet generatedKey = query1.getGeneratedKeys()) {
-                if(generatedKey.next()){
+        String insertGroup = "INSERT INTO groups VALUES (?,?,?,?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertGroup, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setInt(1, school.getId());
+            preparedStatement.setNull(2, Types.INTEGER);
+            preparedStatement.setString(3, group.getName());
+            preparedStatement.setString(4, group.getRoom());
+            preparedStatement.executeUpdate();
+            try (ResultSet generatedKey = preparedStatement.getGeneratedKeys()) {
+                if (generatedKey.next()) {
                     group.setId(generatedKey.getInt(1));
                 }
             }
         }
-        connection.setAutoCommit(true);
     }
 
     public static School getSchoolByIdWithGroups(int id) throws SQLException {
-        String selectQuery = "SELECT school.id, school.name, year, groups.id, groups.name, room FROM school " +
-                "INNER JOIN school_group ON school.id = school_group.schoolid " +
-                "INNER JOIN groups ON school_group.groupid = groups.id WHERE school.id = ?;";
+        String selectQuery = "SELECT * FROM school " +
+                "INNER JOIN groups ON school.id = groups.schoolid WHERE school.id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -293,14 +276,14 @@ public class JdbcService {
                     String schoolName = resultSet.getString(2);
                     int schoolYear = resultSet.getInt(3);
                     school = new School(schoolId, schoolName, schoolYear);
-                    int groupId = resultSet.getInt(4);
-                    String groupName = resultSet.getString(5);
-                    String groupRoom = resultSet.getString(6);
+                    int groupId = resultSet.getInt(5);
+                    String groupName = resultSet.getString(6);
+                    String groupRoom = resultSet.getString(7);
                     groups.add(new Group(groupId, groupName, groupRoom));
                 } else {
-                    int groupId = resultSet.getInt(4);
-                    String groupName = resultSet.getString(5);
-                    String groupRoom = resultSet.getString(6);
+                    int groupId = resultSet.getInt(5);
+                    String groupName = resultSet.getString(6);
+                    String groupRoom = resultSet.getString(7);
                     groups.add(new Group(groupId, groupName, groupRoom));
                 }
             }
@@ -314,9 +297,7 @@ public class JdbcService {
     }
 
     public static List<School> getSchoolsWithGroups() throws SQLException {
-        String selectQuery = "SELECT school.id, school.name, year, groups.id, groups.name, room FROM school " +
-                "INNER JOIN school_group ON school.id = school_group.schoolid " +
-                "INNER JOIN groups ON school_group.groupid = groups.id ORDER BY school.name, year;";
+        String selectQuery = "SELECT * FROM school INNER JOIN groups ON school.id = groups.schoolid ORDER BY school.id";
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<School> schools = new ArrayList<>();
@@ -336,9 +317,9 @@ public class JdbcService {
                     int schoolYear = resultSet.getInt(3);
                     school = new School(schoolId, schoolName, schoolYear);
                 }
-                int groupId = resultSet.getInt(4);
-                String groupName = resultSet.getString(5);
-                String groupRoom = resultSet.getString(6);
+                int groupId = resultSet.getInt(5);
+                String groupName = resultSet.getString(6);
+                String groupRoom = resultSet.getString(7);
                 groups.add(new Group(groupId, groupName, groupRoom));
             }
             if (school != null) {

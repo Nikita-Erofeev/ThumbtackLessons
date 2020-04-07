@@ -7,18 +7,20 @@ CREATE TABLE school (
     name VARCHAR(50) NOT NULL,
     year INT(4) NOT NULL,
     KEY name (name),
+    UNIQUE(name,year),
     PRIMARY KEY (id)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8
 COLLATE utf8_general_ci;
 
 CREATE TABLE groups (
-    schoolid INT(11) null,
+    schoolid INT(11) not null,
     id INT(11) NOT NULL AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
     room VARCHAR(50) DEFAULT NULL,
     KEY schoolid (schoolid),
     KEY name (name),
     KEY room (room),
+    UNIQUE(name,room, schoolid),
     PRIMARY KEY (id),
     FOREIGN KEY (schoolid) REFERENCES school (id) ON DELETE CASCADE
 ) ENGINE=INNODB DEFAULT CHARSET=utf8

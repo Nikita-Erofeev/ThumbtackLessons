@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0// EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.thumbtack.school.database.mybatis.mappers.SchoolMapper">
+
+    <resultMap id="resultSchool" type="net.thumbtack.school.database.model.School">
+        <id property="id" column="school_id" />
+        <result property="name" column="school_name" />
+        <result property="year" column="school_year" />
+        <collection property="groups" column="school_id" javaType="java.util.List"
+                    ofType="net.thumbtack.school.database.model.Group">
+            <result property="id" column="group_id" />
+            <result property="name" column="group_name" />
+            <result property="room" column="group_room" />
+            <collection property="trainees" column="group_id" javaType="java.util.List"
+                        ofType="net.thumbtack.school.database.model.Trainee">
+                <result property="id" column="trainee_id" />
+                <result property="firstName" column="trainee_firstname" />
+                <result property="lastName" column="trainee_lastname" />
+                <result property="rating" column="trainee_rating" />
+            </collection>
+            <collection property="subjects" column="group_id" javaType="java.util.List"
+                        ofType="net.thumbtack.school.database.model.Subject">
+                <result property="id" column="subject_id" />
+                <result property="name" column="subject_name" />
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="getAllUsingJoin" resultMap="resultSchool">
+        SELECT school.id AS school_id, school.name AS school_name, school.year AS school_year,
+        groups.id AS group_id, groups.name AS group_name, groups.room AS group_room,
+        subject.id AS subject_id, subject.name AS subject_name, trainee.id AS trainee_id,
+        trainee.firstname AS trainee_firstname, trainee.lastname AS trainee_lastname,
+        trainee.rating AS trainee_rating
+        FROM school
+        LEFT JOIN groups ON school.id = groups.schoolid
+        LEFT JOIN subject_group ON groups.id = subject_group.groupid
+        LEFT JOIN subject ON subject.id = subject_group.subjectid
+        LEFT JOIN trainee ON groups.id = trainee.groupid;
+    </select>
+</mapper>
