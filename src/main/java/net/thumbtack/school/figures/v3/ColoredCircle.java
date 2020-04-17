@@ -7,17 +7,17 @@ import net.thumbtack.school.iface.v3.Colored;
 public class ColoredCircle extends Circle implements Colored {
     private Color color;
 
-    public ColoredCircle(Point center, int radius, Color color) throws ColorException{
+    public ColoredCircle(Point center, int radius, Color color) throws ColorException {
         super(center, radius);
         this.color = Color.setColor(color);
     }
 
-    public ColoredCircle(int xCenter, int yCenter, int radius, Color color)throws ColorException {
+    public ColoredCircle(int xCenter, int yCenter, int radius, Color color) throws ColorException {
         super(xCenter, yCenter, radius);
         this.color = Color.setColor(color);
     }
 
-    public ColoredCircle(int radius, Color color) throws ColorException{
+    public ColoredCircle(int radius, Color color) throws ColorException {
         super(radius);
         this.color = Color.setColor(color);
     }
@@ -29,7 +29,7 @@ public class ColoredCircle extends Circle implements Colored {
 
     public ColoredCircle() {
         super();
-        this.color = Color.RED;
+        color = Color.RED;
     }
 
     public ColoredCircle(Point center, int radius, String color) throws ColorException {

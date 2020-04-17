@@ -114,19 +114,13 @@ public class SchoolDaoImpl extends DaoImplBase implements SchoolDao {
         try (SqlSession sqlSession = getSession()) {
             try {
                 getSchoolMapper(sqlSession).insert(school);
-                if (school.getGroups().size() > 0) {
-                    for (Group group : school.getGroups()) {
-                        getGroupMapper(sqlSession).insert(school, group);
-                        if (group.getTrainees().size() > 0) {
-                            for (Trainee trainee : group.getTrainees()) {
-                                getTraineeMapper(sqlSession).insertWithGroup(group, trainee);
-                            }
-                        }
-                        if (group.getSubjects().size() > 0) {
-                            for (Subject subject : group.getSubjects()){
-                                getSubjectMapper(sqlSession).connectGroupSubject(group, subject);
-                            }
-                        }
+                for (Group group : school.getGroups()) {
+                    getGroupMapper(sqlSession).insert(school, group);
+                    for (Trainee trainee : group.getTrainees()) {
+                        getTraineeMapper(sqlSession).insertWithGroup(group, trainee);
+                    }
+                    for (Subject subject : group.getSubjects()) {
+                        getSubjectMapper(sqlSession).connectGroupSubject(group, subject);
                     }
                 }
             } catch (RuntimeException ex) {

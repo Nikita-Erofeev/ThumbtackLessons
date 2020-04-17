@@ -15,11 +15,11 @@ public class ColorException extends Exception {
     }
 
     ColorException(ColorErrorCode colorErrorCode, String param) {
-        super(String.format(colorErrorCode.getErrorString(),param));
+        super(String.format(colorErrorCode.getErrorString(), param));
         this.colorErrorCode = colorErrorCode;
     }
 
-    public ColorErrorCode getErrorCode(){
+    public ColorErrorCode getErrorCode() {
         return colorErrorCode;
     }
 }

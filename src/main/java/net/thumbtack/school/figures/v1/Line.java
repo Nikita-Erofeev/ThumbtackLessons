@@ -3,59 +3,73 @@ package net.thumbtack.school.figures.v1;
 public class Line {
     private Point startPoint = new Point();
     private Point endPoint = new Point();
-    public Line(Point startPoint, Point endPoint){
-        this.startPoint=startPoint;
-        this.endPoint=endPoint;
+
+    public Line(Point startPoint, Point endPoint) {
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
     }
-    public Line(int xLeft, int yTop, int xRight, int yBottom){
+
+    public Line(int xLeft, int yTop, int xRight, int yBottom) {
         startPoint.setX(xLeft);
         startPoint.setY(yTop);
         endPoint.setX(xRight);
         endPoint.setY(yBottom);
     }
-    public Line(Point endPoint){
-        this.endPoint=endPoint;
+
+    public Line(Point endPoint) {
+        this.endPoint = endPoint;
     }
-    public Line(int x, int y){
+
+    public Line(int x, int y) {
         endPoint.setX(x);
         endPoint.setY(y);
     }
-    public Line(){
+
+    public Line() {
         endPoint.setX(1);
         endPoint.setY(1);
     }
-    public Point getStartPoint(){
+
+    public Point getStartPoint() {
         return startPoint;
     }
-    public Point getEndPoint(){
+
+    public Point getEndPoint() {
         return endPoint;
     }
-    public void setStartPoint(Point point){
-        this.startPoint=point;
+
+    public void setStartPoint(Point point) {
+        this.startPoint = point;
     }
-    public void setEndPoint(Point point){
-        this.endPoint=point;
+
+    public void setEndPoint(Point point) {
+        this.endPoint = point;
     }
-    public double getLength(){
-        return Math.sqrt(Math.abs(startPoint.getX()-endPoint.getX())*Math.abs(startPoint.getX()-endPoint.getX())
-                +Math.abs(startPoint.getY()-endPoint.getY())*Math.abs(startPoint.getY()-endPoint.getY()));
+
+    public double getLength() {
+        int diffX = startPoint.getX() - endPoint.getX();
+        int diffY = startPoint.getY() - endPoint.getY();
+        return Math.sqrt(Math.pow(diffX,2) + Math.pow(diffY,2));
     }
-    public void moveTo(int x, int y){
+
+    public void moveTo(int x, int y) {
         int whereX = x - startPoint.getX();
         int whereY = y - startPoint.getY();
         startPoint.setX(x);
         startPoint.setY(y);
-        endPoint.setX(endPoint.getX()+whereX);
-        endPoint.setY(endPoint.getY()+whereY);
+        endPoint.setX(endPoint.getX() + whereX);
+        endPoint.setY(endPoint.getY() + whereY);
     }
-    public void moveTo(Point point){
+
+    public void moveTo(Point point) {
         int whereX = point.getX() - startPoint.getX();
         int whereY = point.getY() - startPoint.getY();
-        startPoint=point;
-        endPoint.setX(endPoint.getX()+whereX);
-        endPoint.setY(endPoint.getY()+whereY);
+        startPoint = point;
+        endPoint.setX(endPoint.getX() + whereX);
+        endPoint.setY(endPoint.getY() + whereY);
     }
-    public void moveRel(int dx, int dy){
+
+    public void moveRel(int dx, int dy) {
         startPoint.moveRel(dx, dy);
         endPoint.moveRel(dx, dy);
     }

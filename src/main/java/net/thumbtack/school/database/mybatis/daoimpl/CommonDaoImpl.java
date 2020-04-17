@@ -1,6 +1,5 @@
 package net.thumbtack.school.database.mybatis.daoimpl;
 
-import net.thumbtack.school.database.model.Group;
 import net.thumbtack.school.database.mybatis.dao.CommonDao;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;

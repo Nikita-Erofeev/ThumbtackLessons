@@ -18,14 +18,13 @@ public class PolyLine extends Figure implements Movable {
     }
 
     public void setFirstPoint(Point point) {
-        points[0]=point;
+        points[0] = point;
     }
 
     public void setSecondPoint(int x, int y) {
         points[1].setX(x);
         points[1].setY(y);
     }
-
 
 
     public PolyLine(Point[] points) {
@@ -42,9 +41,12 @@ public class PolyLine extends Figure implements Movable {
 
     public double getLength() {
         double length = 0;
+        double diffSqX;
+        double diffSqY;
         for (int i = 0; i < points.length - 1; i++) {
-            length += Math.sqrt(Math.abs(points[i].getX() - points[i + 1].getX()) * Math.abs(points[i].getX() - points[i + 1].getX())
-                    + Math.abs(points[i].getY() - points[i + 1].getY()) * Math.abs(points[i].getY() - points[i + 1].getY()));
+            diffSqX = Math.pow(points[i].getX() - points[i + 1].getX(),2);
+            diffSqY = Math.pow(points[i].getY() - points[i + 1].getY(),2);
+            length += Math.sqrt(diffSqX + diffSqY);
         }
         return length;
     }

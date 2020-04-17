@@ -2,34 +2,42 @@ package net.thumbtack.school.figures.v1;
 
 public class ColoredLine extends Line {
     private int color;
-    public ColoredLine(Point startPoint, Point endPoint, int color){
+
+    public ColoredLine(Point startPoint, Point endPoint, int color) {
         super(startPoint, endPoint);
-        this.color=color;
+        this.color = color;
     }
-    public ColoredLine(int xLeft, int yTop, int xRight, int yBottom, int color){
+
+    public ColoredLine(int xLeft, int yTop, int xRight, int yBottom, int color) {
         super(xLeft, yTop, xRight, yBottom);
-        this.color=color;
+        this.color = color;
     }
-    public ColoredLine(Point endPoint, int color){
+
+    public ColoredLine(Point endPoint, int color) {
         super(endPoint);
-        this.color=color;
+        this.color = color;
     }
-    public ColoredLine(int x, int y, int color){
+
+    public ColoredLine(int x, int y, int color) {
         super(x, y);
-        this.color=color;
+        this.color = color;
     }
-    public ColoredLine(int color){
+
+    public ColoredLine(int color) {
         super();
-        this.color=color;
+        this.color = color;
     }
-    public ColoredLine(){
+
+    public ColoredLine() {
         super();
-        this.color=1;
+        color = 1;
     }
-    public  void setColor(int color){
-        this.color=color;
+
+    public void setColor(int color) {
+        this.color = color;
     }
-    public int getColor(){
+
+    public int getColor() {
         return color;
     }
 

@@ -6,7 +6,7 @@ public enum ColorErrorCode {
 
     private String errorString;
 
-    ColorErrorCode(String errorString){
+    ColorErrorCode(String errorString) {
         this.errorString = errorString;
     }
 

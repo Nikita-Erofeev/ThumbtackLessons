@@ -7,9 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TraineeDaoImpl extends DaoImplBase implements TraineeDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeDaoImpl.class);

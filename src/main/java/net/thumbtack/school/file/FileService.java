@@ -14,7 +14,7 @@ import java.io.*;
 
 public class FileService {
 
-    public static void writeByteArrayToBinaryFile(String fileName, byte[] array) throws IOException{
+    public static void writeByteArrayToBinaryFile(String fileName, byte[] array) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(new File(fileName))) {
             fos.write(array);
         } catch (IOException e) {
@@ -79,7 +79,7 @@ public class FileService {
         return null;
     }
 
-    public static void writeByteArrayToBinaryFileBuffered(String fileName, byte[] array) throws IOException{
+    public static void writeByteArrayToBinaryFileBuffered(String fileName, byte[] array) throws IOException {
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(fileName)))) {
             bos.write(array);
         } catch (IOException e) {
@@ -95,7 +95,7 @@ public class FileService {
         }
     }
 
-    public static byte[] readByteArrayFromBinaryFileBuffered(String fileName) throws IOException{
+    public static byte[] readByteArrayFromBinaryFileBuffered(String fileName) throws IOException {
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(fileName)))) {
             final int SIZE = 6;
             byte[] array = new byte[SIZE];
@@ -107,7 +107,7 @@ public class FileService {
         return null;
     }
 
-    public static byte[] readByteArrayFromBinaryFileBuffered(File file) throws IOException{
+    public static byte[] readByteArrayFromBinaryFileBuffered(File file) throws IOException {
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
             final int SIZE = 6;
             byte[] array = new byte[SIZE];
@@ -119,7 +119,7 @@ public class FileService {
         return null;
     }
 
-    private static byte[] intToByteArray(int value) throws IOException{
+    private static byte[] intToByteArray(int value) throws IOException {
         return new byte[]{
                 (byte) (value >>> 24),
                 (byte) (value >>> 16),
@@ -269,7 +269,7 @@ public class FileService {
         }
     }
 
-    public static Rectangle[] readRectangleArrayFromBinaryFileReverse(File file) throws IOException{
+    public static Rectangle[] readRectangleArrayFromBinaryFileReverse(File file) throws IOException {
         try (DataInputStream dis = new DataInputStream(new FileInputStream(file))) {
             byte[] first = new byte[4];
             byte[] second = new byte[4];
@@ -312,7 +312,7 @@ public class FileService {
         }
     }
 
-    public static Rectangle readRectangleFromTextFileOneLine(File file) throws IOException{
+    public static Rectangle readRectangleFromTextFileOneLine(File file) throws IOException {
         try (InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "UTF-8")) {
             int size = 23;
             char[] buf = new char[size];
@@ -433,7 +433,7 @@ public class FileService {
         return null;
     }
 
-    public static void serializeTraineeToBinaryFile(File file, Trainee trainee) throws IOException{
+    public static void serializeTraineeToBinaryFile(File file, Trainee trainee) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
             oos.writeObject(trainee);
         } catch (IOException e) {
@@ -464,19 +464,19 @@ public class FileService {
     }
 
     public static void serializeTraineeToJsonFile(File file, Trainee trainee) throws IOException {
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(file))){
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             Gson gs = new Gson();
-            gs.toJson(trainee,bw);
-        }catch (IOException e){
+            gs.toJson(trainee, bw);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static Trainee deserializeTraineeFromJsonFile(File file) throws IOException {
-        try(BufferedReader br = new BufferedReader(new FileReader(file))){
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             Gson gs = new Gson();
-            return gs.fromJson(br,Trainee.class);
-        }catch (IOException e){
+            return gs.fromJson(br, Trainee.class);
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;

@@ -2,64 +2,84 @@ package net.thumbtack.school.figures.v1;
 
 public class Circle {
     private Point center = new Point();
-    private int radius=1;
+    private int radius = 1;
 
-    public Circle(Point center, int radius){
-        this.center=center;
-        this.radius=radius;
+    public Circle(Point center, int radius) {
+        this.center = center;
+        this.radius = radius;
     }
-    public Circle(int xCenter, int yCenter, int radius){
+
+    public Circle(int xCenter, int yCenter, int radius) {
         center.setX(xCenter);
         center.setY(yCenter);
-        this.radius=radius;
+        this.radius = radius;
     }
-    public Circle(int radius){
-        this.radius=radius;
+
+    public Circle(int radius) {
+        this.radius = radius;
     }
-    public Circle(){
-        this.radius=1;
+
+    public Circle() {
     }
-    public Point getCenter(){
+
+    public Point getCenter() {
         return center;
     }
-    public int getRadius(){
+
+    public int getRadius() {
         return radius;
     }
-    public void setCenter(Point center){
-        this.center=center;
+
+    public void setCenter(Point center) {
+        this.center = center;
     }
-    public void setRadius(int radius){
-        this.radius=radius;
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
-    public void moveRel(int dx, int dy){
+
+    public void moveRel(int dx, int dy) {
         this.center.moveRel(dx, dy);
     }
-    public void moveTo(int x, int y){
+
+    public void moveTo(int x, int y) {
         this.center.moveTo(x, y);
     }
-    public void moveTo(Point point){
-        this.center=point;
+
+    public void moveTo(Point point) {
+        this.center = point;
     }
-    public void resize(int ratio){
-        this.radius*=ratio;
+
+    public void resize(int ratio) {
+        this.radius *= ratio;
     }
-    public double getArea(){
-        return Math.PI*radius*radius;
+
+    public double getArea() {
+        return Math.PI * radius * radius;
     }
-    public double getPerimeter(){
-        return 2*Math.PI*radius;
+
+    public double getPerimeter() {
+        return 2 * Math.PI * radius;
     }
-    public boolean isInside(int x, int y){
-        if ((this.center.getX()-x)*(this.center.getX()-x)+(this.center.getY()-y)*
-                (this.center.getY()-y)<=this.radius*this.radius)
+
+    public boolean isInside(int x, int y) {
+        double diffSqX = Math.pow(center.getX() - x, 2);
+        double diffSqY = Math.pow(center.getY() - y, 2);
+        double radiusSq = Math.pow(radius, 2);
+        if (diffSqX + diffSqY <= radiusSq){
             return true;
+        }
         return false;
     }
-    public boolean isInside(Point point){
-        if ((this.center.getX()-point.getX())*(this.center.getX()-point.getX())+(this.center.getY()-point.getY())*
-                (this.center.getY()-point.getY())<=this.radius*this.radius)
+
+    public boolean isInside(Point point) {
+        double diffSqX = Math.pow(center.getX() - point.getX(), 2);
+        double diffSqY = Math.pow(center.getY() - point.getY(), 2);
+        double radiusSq = Math.pow(radius, 2);
+        if (diffSqX + diffSqY <= radiusSq){
             return true;
-        return false;
+        }
+            return false;
     }
 
     @Override

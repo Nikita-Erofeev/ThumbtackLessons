@@ -117,29 +117,33 @@ public class Rectangle extends ClosedFigure implements Movable, Resizable, HasMe
     }
 
     public boolean isInside(int x, int y) {
-        if (leftTop.getX() <= x & leftTop.getY() <= y & rightBottom.getX() >= x & rightBottom.getY() >= y)
+        if (leftTop.getX() <= x & leftTop.getY() <= y & rightBottom.getX() >= x & rightBottom.getY() >= y) {
             return true;
+        }
         return false;
     }
 
     public boolean isInside(Point point) {
         if (leftTop.getX() <= point.getX() & leftTop.getY() <= point.getY() & rightBottom.getX() >= point.getX() &
-                rightBottom.getY() >= point.getY())
+                rightBottom.getY() >= point.getY()) {
             return true;
+        }
         return false;
     }
 
     public boolean isIntersects(Rectangle rectangle) {
         if (this.leftTop.getX() > rectangle.rightBottom.getX() || this.leftTop.getY() > rectangle.rightBottom.getY()
-                || this.rightBottom.getX() < rectangle.leftTop.getX() || this.rightBottom.getY() < rectangle.leftTop.getY())
+                || this.rightBottom.getX() < rectangle.leftTop.getX() || this.rightBottom.getY() < rectangle.leftTop.getY()) {
             return false;
+        }
         return true;
     }
 
     public boolean isInside(Rectangle rectangle) {
         if (this.leftTop.getX() <= rectangle.leftTop.getX() & this.leftTop.getY() <= rectangle.leftTop.getY()
-                & this.rightBottom.getX() >= rectangle.rightBottom.getX() & this.rightBottom.getY() >= rectangle.rightBottom.getY())
+                & this.rightBottom.getX() >= rectangle.rightBottom.getX() & this.rightBottom.getY() >= rectangle.rightBottom.getY()) {
             return true;
+        }
         return false;
     }
 

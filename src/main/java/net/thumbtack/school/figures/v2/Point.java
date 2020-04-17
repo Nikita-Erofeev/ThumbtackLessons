@@ -3,6 +3,7 @@ package net.thumbtack.school.figures.v2;
 import net.thumbtack.school.iface.v2.Movable;
 
 public class Point extends Figure implements Movable {
+    private int x, y;
 
     //Только для возможности имплементации
     public Point getFirstPoint() {
@@ -18,9 +19,6 @@ public class Point extends Figure implements Movable {
 
     public void setSecondPoint(int x, int y) {
     }
-
-
-    private int x, y;
 
     public Point(int x, int y) {
         this.x = x;

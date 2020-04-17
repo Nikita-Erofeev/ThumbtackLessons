@@ -1,27 +1,30 @@
 package net.thumbtack.school.ttschool;
 
 import java.io.Serializable;
-import java.util.regex.Pattern;
 
 public class Trainee implements Serializable {
     private String firstName;
     private String lastName;
     private int rating;
 
+    private boolean isNotEmpty(String string) {
+        return string != null && !string.equals("");
+    }
+
     public Trainee(String firstName, String lastName, int rating) throws TrainingException {
-        if(firstName != null && !firstName.equals("")){
+        if (isNotEmpty(firstName)) {
             this.firstName = firstName;
         } else {
             throw new TrainingException(TrainingErrorCode.TRAINEE_WRONG_FIRSTNAME);
         }
 
-        if(lastName != null && !lastName.equals("")){
+        if (isNotEmpty(lastName)) {
             this.lastName = lastName;
         } else {
             throw new TrainingException(TrainingErrorCode.TRAINEE_WRONG_LASTNAME);
         }
 
-        if(rating > 0 && rating < 6){
+        if (rating > 0 && rating < 6) {
             this.rating = rating;
         } else {
             throw new TrainingException(TrainingErrorCode.TRAINEE_WRONG_RATING);
@@ -29,12 +32,12 @@ public class Trainee implements Serializable {
 
     }
 
-    public String getFirstName(){
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) throws TrainingException{
-        if(firstName!="" && firstName != null){
+    public void setFirstName(String firstName) throws TrainingException {
+        if (isNotEmpty(firstName)) {
             this.firstName = firstName;
         } else {
             throw new TrainingException(TrainingErrorCode.TRAINEE_WRONG_FIRSTNAME);
@@ -46,7 +49,7 @@ public class Trainee implements Serializable {
     }
 
     public void setLastName(String lastName) throws TrainingException {
-        if(lastName !="" && lastName != null){
+        if (isNotEmpty(lastName)) {
             this.lastName = lastName;
         } else {
             throw new TrainingException(TrainingErrorCode.TRAINEE_WRONG_LASTNAME);
@@ -58,14 +61,14 @@ public class Trainee implements Serializable {
     }
 
     public void setRating(int rating) throws TrainingException {
-        if(rating > 0 && rating < 6){
+        if (rating > 0 && rating < 6) {
             this.rating = rating;
         } else {
             throw new TrainingException(TrainingErrorCode.TRAINEE_WRONG_RATING);
         }
     }
 
-    public String getFullName(){
+    public String getFullName() {
         return firstName + " " + lastName;
     }
 

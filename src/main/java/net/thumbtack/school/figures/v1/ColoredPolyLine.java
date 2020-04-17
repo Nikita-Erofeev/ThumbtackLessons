@@ -1,16 +1,19 @@
 package net.thumbtack.school.figures.v1;
 
-public class ColoredPolyLine extends PolyLine{
+public class ColoredPolyLine extends PolyLine {
     private int color;
-    public ColoredPolyLine(Point[] points, int color){
+
+    public ColoredPolyLine(Point[] points, int color) {
         super(points);
-        this.color=color;
+        this.color = color;
     }
-    public int getColor(){
+
+    public int getColor() {
         return color;
     }
-    public void setColor(int color){
-        this.color=color;
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     @Override

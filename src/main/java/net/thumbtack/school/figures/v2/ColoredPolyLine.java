@@ -4,15 +4,18 @@ import net.thumbtack.school.iface.v2.Colored;
 
 public class ColoredPolyLine extends PolyLine implements Colored {
     private int color;
-    public ColoredPolyLine(Point[] points, int color){
+
+    public ColoredPolyLine(Point[] points, int color) {
         super(points);
-        this.color=color;
+        this.color = color;
     }
-    public int getColor(){
+
+    public int getColor() {
         return color;
     }
-    public void setColor(int color){
-        this.color=color;
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     @Override

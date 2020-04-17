@@ -70,8 +70,8 @@ public class Line extends Figure implements Movable {
     }
 
     public double getLength() {
-        double x = Math.pow(startPoint.getX() - endPoint.getX(),2);
-        double y = Math.pow(startPoint.getY() - endPoint.getY(),2);
+        double x = Math.pow(startPoint.getX() - endPoint.getX(), 2);
+        double y = Math.pow(startPoint.getY() - endPoint.getY(), 2);
         return Math.sqrt(x + y);
     }
 

@@ -18,20 +18,23 @@ public class FirstSteps {
     }
 
     public boolean isEqual(int x, int y) {
-        if (x == y)
+        if (x == y) {
             return true;
+        }
         return false;
     }
 
     public boolean isGreater(int x, int y) {
-        if (x > y)
+        if (x > y) {
             return true;
+        }
         return false;
     }
 
     public boolean isInsideRect(int xLeft, int yTop, int xRight, int yBottom, int x, int y) {
-        if ((x >= xLeft & x <= xRight) & (y >= yTop & y <= yBottom))
+        if ((x >= xLeft & x <= xRight) & (y >= yTop & y <= yBottom)) {
             return true;
+        }
         return false;
     }
 
@@ -45,10 +48,11 @@ public class FirstSteps {
 
     public int mul(int[] array) {
         int mul;
-        if (array.length != 0)
+        if (array.length != 0) {
             mul = array[0];
-        else
+        } else {
             return 0;
+        }
         for (int i = 1; i < array.length; i++) {
             mul *= array[i];
         }
@@ -57,10 +61,11 @@ public class FirstSteps {
 
     public int min(int[] array) {
         int min;
-        if (array.length != 0)
+        if (array.length != 0) {
             min = array[0];
-        else
+        } else {
             return Integer.MAX_VALUE;
+        }
         for (int i = 1; i < array.length; i++) {
             if (min > array[i])
                 min = array[i];
@@ -70,21 +75,24 @@ public class FirstSteps {
 
     public int max(int[] array) {
         int max;
-        if (array.length != 0)
+        if (array.length != 0) {
             max = array[0];
-        else
+        } else {
             return Integer.MIN_VALUE;
+        }
         for (int i = 1; i < array.length; i++) {
-            if (max < array[i])
+            if (max < array[i]) {
                 max = array[i];
+            }
         }
         return max;
     }
 
     public double average(int[] array) {
         double sum = 0;
-        if (array.length == 0)
+        if (array.length == 0) {
             return sum;
+        }
         for (int i = 0; i < array.length; i++) {
             sum += array[i];
         }
@@ -95,8 +103,9 @@ public class FirstSteps {
         if (array.length == 0)
             return true;
         for (int i = 0; i < array.length - 1; i++) {
-            if (array[i] <= array[i + 1])
+            if (array[i] <= array[i + 1]) {
                 return false;
+            }
         }
         return true;
     }
@@ -109,8 +118,9 @@ public class FirstSteps {
 
     public boolean find(int[] array, int value) {
         for (int i = 0; i < array.length; i++) {
-            if (array[i] == value)
+            if (array[i] == value) {
                 return true;
+            }
         }
         return false;
     }
@@ -130,8 +140,9 @@ public class FirstSteps {
             return true;
         int mid = array.length / 2;
         for (int i = 0; i < mid; i++) {
-            if (array[i] != array[array.length - 1 - i])
+            if (array[i] != array[array.length - 1 - i]) {
                 return false;
+            }
         }
         return true;
     }
@@ -150,8 +161,9 @@ public class FirstSteps {
         int max = Integer.MIN_VALUE;
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                if (max < matrix[i][j])
+                if (max < matrix[i][j]) {
                     max = matrix[i][j];
+                }
             }
         }
         return max;
@@ -160,8 +172,9 @@ public class FirstSteps {
     public int diagonalMax(int[][] matrix) {
         int max = Integer.MIN_VALUE;
         for (int i = 0; i < matrix.length; i++) {
-            if (max < matrix[i][i])
+            if (max < matrix[i][i]) {
                 max = matrix[i][i];
+            }
         }
         return max;
     }
@@ -169,8 +182,9 @@ public class FirstSteps {
     public boolean isSortedDescendant(int[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length - 1; j++) {
-                if (matrix[i][j] <= matrix[i][j + 1])
+                if (matrix[i][j] <= matrix[i][j + 1]) {
                     return false;
+                }
             }
         }
         return true;

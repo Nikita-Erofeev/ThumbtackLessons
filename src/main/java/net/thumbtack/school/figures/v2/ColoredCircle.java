@@ -4,31 +4,38 @@ import net.thumbtack.school.iface.v2.Colored;
 
 public class ColoredCircle extends Circle implements Colored {
     private int color;
-    public ColoredCircle(Point center, int radius, int color){
+
+    public ColoredCircle(Point center, int radius, int color) {
         super(center, radius);
-        this.color=color;
+        this.color = color;
     }
-    public ColoredCircle(int xCenter, int yCenter, int radius, int color){
+
+    public ColoredCircle(int xCenter, int yCenter, int radius, int color) {
         super(xCenter, yCenter, radius);
-        this.color=color;
+        this.color = color;
     }
-    public ColoredCircle(int radius, int color){
+
+    public ColoredCircle(int radius, int color) {
         super(radius);
-        this.color=color;
+        this.color = color;
     }
-    public ColoredCircle(int color){
+
+    public ColoredCircle(int color) {
         super();
-        this.color=color;
+        this.color = color;
     }
-    public ColoredCircle(){
+
+    public ColoredCircle() {
         super();
-        this.color=1;
+        color = 1;
     }
-    public int getColor(){
+
+    public int getColor() {
         return color;
     }
-    public void setColor(int color){
-        this.color=color;
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     @Override

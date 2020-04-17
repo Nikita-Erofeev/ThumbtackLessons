@@ -7,7 +7,7 @@ import net.thumbtack.school.iface.v3.Colored;
 public class ColoredLine extends Line implements Colored {
     private Color color;
 
-    public ColoredLine(Point startPoint, Point endPoint, Color color) throws ColorException{
+    public ColoredLine(Point startPoint, Point endPoint, Color color) throws ColorException {
         super(startPoint, endPoint);
         this.color = Color.setColor(color);
     }
@@ -34,7 +34,7 @@ public class ColoredLine extends Line implements Colored {
 
     public ColoredLine() {
         super();
-        this.color = Color.RED;
+        color = Color.RED;
     }
 
     public ColoredLine(Point startPoint, Point endPoint, String color) throws ColorException {
