@@ -7,23 +7,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Application implements Serializable {
+    private int id;
     private String name;
     private String description;
-    private List<String> subjectsList = new ArrayList<>();
+    private List<Subject> subjectsList = new ArrayList<>();
     private int amountRequested;
 
-    public Application(String name, String description, List<String> subjectsList, int amountRequested) {
+    public Application(int id, String name, String description, List<Subject> subjectsList, int amountRequested){
+        this.id = id;
         this.name = name;
         this.description = description;
         this.subjectsList.addAll(subjectsList);
         this.amountRequested = amountRequested;
     }
 
+    public Application(String name, String description, List<Subject> subjectsList, int amountRequested) {
+        id = 0;
+        this.name = name;
+        this.description = description;
+        this.subjectsList.addAll(subjectsList);
+        this.amountRequested = amountRequested;
+    }
+
+    public Application(int id, String name, String description, int amountRequested) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        subjectsList = new ArrayList<>();
+        this.amountRequested = amountRequested;
+    }
+
     public Application(ApplicationDto applicationDto) {
+        id = applicationDto.getId();
         name = applicationDto.getName();
         description = applicationDto.getDescription();
         subjectsList.addAll(applicationDto.getSubjectsList());
         amountRequested = applicationDto.getAmountRequested();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -34,7 +57,7 @@ public class Application implements Serializable {
         return description;
     }
 
-    public List<String> getSubjectsList() {
+    public List<Subject> getSubjectsList() {
         return subjectsList;
     }
 
@@ -42,29 +65,36 @@ public class Application implements Serializable {
         return amountRequested;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String toString() {
-        return name + " " + description + " " + subjectsList.toString() + " " + amountRequested;
+        return id + " " + name + " " + description + " " + subjectsList.toString() + " " + amountRequested;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Application)) return false;
 
         Application that = (Application) o;
 
-        if (amountRequested != that.amountRequested) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        return subjectsList != null ? subjectsList.equals(that.subjectsList) : that.subjectsList == null;
+        if (getId() != that.getId()) return false;
+        if (getAmountRequested() != that.getAmountRequested()) return false;
+        if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) return false;
+        if (getDescription() != null ? !getDescription().equals(that.getDescription()) : that.getDescription() != null)
+            return false;
+        return getSubjectsList() != null ? getSubjectsList().equals(that.getSubjectsList()) : that.getSubjectsList() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (subjectsList != null ? subjectsList.hashCode() : 0);
-        result = 31 * result + amountRequested;
+        int result = getId();
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
+        result = 31 * result + (getSubjectsList() != null ? getSubjectsList().hashCode() : 0);
+        result = 31 * result + getAmountRequested();
         return result;
     }
 }

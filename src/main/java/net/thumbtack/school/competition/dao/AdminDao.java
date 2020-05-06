@@ -1,8 +1,12 @@
 package net.thumbtack.school.competition.dao;
 
 import net.thumbtack.school.competition.exceptions.CompetitionException;
+import net.thumbtack.school.competition.model.Application;
+
+import java.util.Map;
 
 public interface AdminDao {
-    String summarize(int fund, int minRate) throws CompetitionException;
+    Map<Application, Float> summarize() throws CompetitionException;
+    boolean clearDatabase();
 }
 

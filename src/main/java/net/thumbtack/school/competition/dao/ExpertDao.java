@@ -8,4 +8,5 @@ public interface ExpertDao {
     String insertExpert(Expert expert) throws CompetitionException;
     String changeRating(String token, Application application, int rating) throws CompetitionException;
     String deleteRating(String token, Application application) throws CompetitionException;
+    String showExpertSubjects(String token) throws CompetitionException;
 }

@@ -1,11 +1,16 @@
 package net.thumbtack.school.competition;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import net.thumbtack.school.competition.daoimpl.AdminDaoImpl;
 import net.thumbtack.school.competition.dto.*;
+import net.thumbtack.school.competition.model.Application;
+import net.thumbtack.school.competition.model.Subject;
 import net.thumbtack.school.competition.server.Server;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +20,16 @@ class TestApplications {
     private String token1, token2, token3, tokenExpert1, tokenExpert2;
     private ApplicationDto appError1, appError2, app1, app2, app3, app4, app5, app6;
     private String[] apps123;
-    private List<String> subjects2;
+    private List<Subject> subjects2;
     private Gson json = new Gson();
     private Server server = new Server();
 
+
     @BeforeEach
     void setUp() {
-        server.startServer(null);
+        server.startServer();
+        AdminDaoImpl adminDao = new AdminDaoImpl();
+        adminDao.clearDatabase();
         RegisterMemberDto member1 = new RegisterMemberDto("Олег", "Сухоруков",
                 "ООО \"Газнефть\"", "@leg", "123456");
         RegisterMemberDto member2 = new RegisterMemberDto("Валентин", "Агапкин",
@@ -29,12 +37,12 @@ class TestApplications {
         RegisterMemberDto member3 = new RegisterMemberDto("Александр", "Золотарев",
                 "ООО \"San-Bro\"", "Zolotarev@less", "654321");
 
-        List<String> subjects3 = new ArrayList<>(); //Для экспертов
-        subjects3.add("Математика");
-        subjects3.add("Английский язык");
-        List<String> subjects4 = new ArrayList<>(); //Для экспертов
-        subjects4.add("Информатика");
-        subjects4.add("Физика");
+        List<Subject> subjects3 = new ArrayList<>(); //Для экспертов
+        subjects3.add(new Subject("Математика"));
+        subjects3.add(new Subject("Английский язык"));
+        List<Subject> subjects4 = new ArrayList<>(); //Для экспертов
+        subjects4.add(new Subject("Информатика"));
+        subjects4.add(new Subject("Физика"));
 
         RegisterExpertDto expert1 = new RegisterExpertDto("Эксперт1", "Эксперт", subjects3,
                 "expert1@", "123456");
@@ -49,12 +57,12 @@ class TestApplications {
     }
 
     private void forAddApp() {
-        List<String> subjects1 = new ArrayList<>(); //Для заявок
-        subjects1.add("Математика");
-        subjects1.add("Физика");
+        List<Subject> subjects1 = new ArrayList<>(); //Для заявок
+        subjects1.add(new Subject("Математика"));
+        subjects1.add(new Subject("Физика"));
         subjects2 = new ArrayList<>(); //Для заявок
-        subjects2.add("Английский язык");
-        subjects2.add("Русский язык");
+        subjects2.add(new Subject("Английский язык"));
+        subjects2.add(new Subject("Русский язык"));
 
         appError1 = new ApplicationDto("Грант Олега Сухорукова 1", "",
                 subjects1, 40000);
@@ -89,9 +97,17 @@ class TestApplications {
 
     private void rateApp() {
         addApp();
-        server.rateApplication(tokenExpert1, json.toJson(app1), 5);
-        server.rateApplication(tokenExpert1, json.toJson(app2), 3);
-        server.rateApplication(tokenExpert2, json.toJson(app2), 4);
+//        String listAppJson = server.expertShowApplications(tokenExpert1);
+//        Gson json = new Gson();
+//        List applist = json.fromJson(listAppJson, List.class);
+        String listApp1Json = json.fromJson(server.expertShowApplications(tokenExpert1), DtoResponse.class).getResponse();
+        String listApp2Json = json.fromJson(server.expertShowApplications(tokenExpert2), DtoResponse.class).getResponse();
+        Type itemsListType = new TypeToken<List<Application>>() {}.getType();
+        List<Application> listApp1 = json.fromJson(listApp1Json, itemsListType);
+        List<Application> listApp2 = json.fromJson(listApp2Json, itemsListType);
+        server.rateApplication(tokenExpert1, json.toJson(listApp1.get(0)), 5);
+        server.rateApplication(tokenExpert1, json.toJson(listApp1.get(1)), 3);
+        server.rateApplication(tokenExpert2, json.toJson(listApp2.get(1)), 4);
     }
 
 
@@ -111,29 +127,35 @@ class TestApplications {
     @Test
     void testShowApplications() {
         addApp();
-        assertEquals(485, server.memberShowApplications(token1).length());
-        assertEquals(163, server.memberShowApplications(token2).length());
-        assertEquals(336, server.memberShowApplications(token3).length());
-        assertEquals(952, server.expertShowApplications(tokenExpert1).length());
-        assertEquals(466, server.expertShowApplications(tokenExpert2).length());
+        assertEquals(638, server.memberShowApplications(token1).length());
+        assertEquals(215, server.memberShowApplications(token2).length());
+        assertEquals(440, server.memberShowApplications(token3).length());
+        assertEquals(1261, server.expertShowApplications(tokenExpert1).length());
+        assertEquals(621, server.expertShowApplications(tokenExpert2).length());
         assertEquals("{\"error\":\"Invalid request\"}", server.expertShowApplications(tokenExpert1, subjects2));
-        List<String> list = new ArrayList<>();
-        list.add("Математика");
-        assertEquals(466, server.expertShowApplications(tokenExpert1, list).length());
+        Type itemsListType = new TypeToken<List<Subject>>() {}.getType();
+        String jsonStr = json.fromJson(server.showExpertSubject(tokenExpert1), DtoResponse.class).getResponse();
+        List<Subject> list = new Gson().fromJson(jsonStr, itemsListType);
+        list.remove(0);
+        assertEquals(656, server.expertShowApplications(tokenExpert1, list).length());
     }
 
     @Test
     void testRateApplications() {
         addApp();
+        String listApp1Json = json.fromJson(server.memberShowApplications(token1), DtoResponse.class).getResponse();
+        Type itemsListType = new TypeToken<List<Application>>() {}.getType();
+        List<Application> listApp1 = json.fromJson(listApp1Json, itemsListType);
         /*Оценка заявок*/
-        assertEquals("{\"error\":\"invalid rating\"}", server.rateApplication(tokenExpert1, json.toJson(app1), 6));
+        assertEquals("{\"error\":\"invalid rating\"}",
+                server.rateApplication(tokenExpert1, json.toJson(listApp1.get(0)), 6));
         assertEquals("{\"response\":\"You rated application: Грант Олега Сухорукова 1\"}",
-                server.rateApplication(tokenExpert1, json.toJson(app1), 5));
+                server.rateApplication(tokenExpert1, json.toJson(listApp1.get(0)), 5));
         assertEquals("{\"response\":\"You rated application: Грант Олега Сухорукова 2\"}",
-                server.rateApplication(tokenExpert1, json.toJson(app2), 3));
+                server.rateApplication(tokenExpert1, json.toJson(listApp1.get(1)), 3));
         assertEquals("{\"error\":\"Such application not exist\"}",
-                server.rateApplication(tokenExpert2, json.toJson(app2), 4));
-        assertEquals(181, server.showRatedApplications(tokenExpert1).length());
+                server.rateApplication(tokenExpert2, json.toJson(listApp1.get(1)), 4));
+        assertEquals(361, server.showRatedApplications(tokenExpert1).length());
         assertEquals("{\"error\":\"There are no rated applications\"}", server.showRatedApplications(tokenExpert2));
     }
 
@@ -141,30 +163,37 @@ class TestApplications {
     void testChangeRatingApplications() {
         rateApp();
         assertEquals("{\"response\":\"ok\"}", server.changeRating(tokenExpert1, json.toJson(app1), 1));
-        assertEquals(181, server.showRatedApplications(tokenExpert1).length());
+        assertEquals(361, server.showRatedApplications(tokenExpert1).length());
 
     }
 
     @Test
     void testDeleteRatingApplications() {
         rateApp();
-        assertEquals("{\"response\":\"ok\"}", server.deleteRating(tokenExpert1, json.toJson(app2)));
-        assertEquals("{\"error\":\"There are no rated applications\"}", server.showRatedApplications(tokenExpert2));
+        String listApp1Json = json.fromJson(server.expertShowApplications(tokenExpert1), DtoResponse.class).getResponse();
+        Type itemsListType = new TypeToken<ArrayList<Application>>() {}.getType();
+        List<Application> listApp1 = json.fromJson(listApp1Json, itemsListType);
+        assertEquals("{\"response\":\"ok\"}", server.deleteRating(tokenExpert1, json.toJson(listApp1.get(0))));
+        assertEquals("{\"response\":\"ok\"}", server.deleteRating(tokenExpert1, json.toJson(listApp1.get(1))));
+        assertEquals("{\"error\":\"There are no rated applications\"}", server.showRatedApplications(tokenExpert1));
     }
 
     @Test
     void testDeleteApplications() {
         rateApp();
+        String listApp1Json = json.fromJson(server.memberShowApplications(token1), DtoResponse.class).getResponse();
+        Type itemsListType = new TypeToken<List<Application>>() {}.getType();
+        List<Application> listApp1 = json.fromJson(listApp1Json, itemsListType);
         /*Проверка результатов удаления заявок одного пользователя*/
-        server.memberDeleteApplication(token1, json.toJson(app1));
-        assertEquals(336, server.memberShowApplications(token1).length());
+        server.memberDeleteApplication(token1, json.toJson(listApp1.get(0)));
+        assertEquals(434, server.memberShowApplications(token1).length());
         assertEquals("{\"error\":\"Such application not exist\"}",
                 server.memberDeleteApplication(token1, json.toJson(app5)));
-        assertEquals(104, server.showRatedApplications(tokenExpert1).length());
-        server.memberDeleteApplication(token1, json.toJson(app2));
+        assertEquals(188, server.showRatedApplications(tokenExpert1).length());
+        server.memberDeleteApplication(token1, json.toJson(listApp1.get(1)));
         assertEquals("{\"error\":\"There are no rated applications\"}", server.showRatedApplications(tokenExpert1));
-        assertEquals(176, server.memberShowApplications(token1).length());
-        server.memberDeleteApplication(token1, json.toJson(app3));
+        assertEquals(225, server.memberShowApplications(token1).length());
+        server.memberDeleteApplication(token1, json.toJson(listApp1.get(2)));
         assertEquals("{\"response\":\"[]\"}", server.memberShowApplications(token1));
     }
 

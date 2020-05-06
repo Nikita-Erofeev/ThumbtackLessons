@@ -1,9 +1,12 @@
 package net.thumbtack.school.competition;
 
 import com.google.gson.Gson;
+import net.thumbtack.school.competition.daoimpl.AdminDaoImpl;
 import net.thumbtack.school.competition.dto.LoginDto;
 import net.thumbtack.school.competition.dto.RegisterExpertDto;
 import net.thumbtack.school.competition.dto.RegisterMemberDto;
+import net.thumbtack.school.competition.model.Subject;
+import net.thumbtack.school.competition.mybatis.utils.MyBatisUtils;
 import net.thumbtack.school.competition.server.Server;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,18 +19,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestInsertDeleteUser {
     private RegisterMemberDto memberError1, member2, member3, memberSameLogin;
     private RegisterExpertDto expertSameLogin, expert2, expert3, expert4;
-    private List<String> subjects2 = new ArrayList<>();
+    private List<Subject> subjects2 = new ArrayList<>();
     private String memberToken3, expertToken3;
     private Gson json = new Gson();
     private Server server = new Server();
 
     @BeforeEach
     private void setUp() {
-        server.startServer(null);
+        server.startServer();
+        AdminDaoImpl adminDao = new AdminDaoImpl();
+        adminDao.clearDatabase();
         member3 = new RegisterMemberDto("Александр", "Золотарев",
                 "ООО \"San-Bro\"", "Zolotarev@less", "222222");
-        subjects2.add("Английский язык");
-        subjects2.add("Русский язык");
+        subjects2.add(new Subject("Английский язык"));
+        subjects2.add(new Subject("Русский язык"));
         expert3 = new RegisterExpertDto("Валерия", "Ким", subjects2,
                 "Valeria32", "333333");
         memberToken3 = server.registerMember(json.toJson(member3));
@@ -42,9 +47,9 @@ class TestInsertDeleteUser {
         memberSameLogin = new RegisterMemberDto("Виталий", "Милонов",
                 "ООО \"Subway\"", "Zolotarev@less", "333333");
 
-        List<String> subjects1 = new ArrayList<>();
-        subjects1.add("Математика");
-        subjects1.add("Физика");
+        List<Subject> subjects1 = new ArrayList<>();
+        subjects1.add(new Subject("Математика"));
+        subjects1.add(new Subject("Физика"));
 
         expertSameLogin = new RegisterExpertDto("Виталий", "Меньшиков", subjects1,
                 "Zolotarev@less", "111111");
@@ -60,18 +65,14 @@ class TestInsertDeleteUser {
         server.stopServer(null);
         assertEquals("{\"error\":\"Database is not available\"}", server.registerMember(json.toJson(memberSameLogin)));
         assertEquals("{\"error\":\"Database is not available\"}", server.registerExpert(json.toJson(expertSameLogin)));
-        server.startServer(null);
+        server.startServer();
         String memberToken1 = server.registerMember(json.toJson(member2));
-        String memberToken2 = server.registerMember(json.toJson(member3));
         String expertToken1 = server.registerExpert(json.toJson(expert2));
-        String expertToken2 = server.registerExpert(json.toJson(expert3));
         assertEquals("{\"error\":\"invalid request\"}", server.registerMember(json.toJson(memberError1)));
         assertEquals(48, memberToken1.length());
-        assertEquals(48, memberToken2.length());
         assertEquals("{\"error\":\"This user already exist\"}", server.registerMember(json.toJson(memberSameLogin)));
         assertEquals("{\"error\":\"This user already exist\"}", server.registerExpert(json.toJson(expertSameLogin)));
         assertEquals(48, expertToken1.length());
-        assertEquals(48, expertToken2.length());
         assertEquals("{\"error\":\"invalid request\"}", server.registerExpert(json.toJson(expert4)));
     }
 

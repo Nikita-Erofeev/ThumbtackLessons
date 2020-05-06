@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import net.thumbtack.school.competition.daoimpl.ApplicationDaoImpl;
 import net.thumbtack.school.competition.daoimpl.MemberDaoImpl;
-import net.thumbtack.school.competition.database.Database;
 import net.thumbtack.school.competition.dto.*;
 import net.thumbtack.school.competition.exceptions.CompetitionException;
 import net.thumbtack.school.competition.model.Application;
@@ -14,9 +13,9 @@ public class MemberService {
     private MemberDaoImpl memberDao;
     private ApplicationDaoImpl applicationDao;
 
-    public MemberService(Database database) {
-        memberDao = new MemberDaoImpl(database);
-        applicationDao = new ApplicationDaoImpl(database);
+    public MemberService() {
+        memberDao = new MemberDaoImpl();
+        applicationDao = new ApplicationDaoImpl();
     }
 
     public String registerMember(String requestJsonString) {

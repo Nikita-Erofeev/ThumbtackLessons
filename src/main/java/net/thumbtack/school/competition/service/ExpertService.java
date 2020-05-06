@@ -4,11 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import net.thumbtack.school.competition.daoimpl.ApplicationDaoImpl;
 import net.thumbtack.school.competition.daoimpl.ExpertDaoImpl;
-import net.thumbtack.school.competition.database.Database;
 import net.thumbtack.school.competition.dto.*;
 import net.thumbtack.school.competition.exceptions.CompetitionException;
 import net.thumbtack.school.competition.model.Application;
 import net.thumbtack.school.competition.model.Expert;
+import net.thumbtack.school.competition.model.Subject;
+import net.thumbtack.school.database.mybatis.daoimpl.SubjectDaoImpl;
 
 import java.util.List;
 
@@ -16,9 +17,9 @@ public class ExpertService {
     private ExpertDaoImpl expertDao;
     private ApplicationDaoImpl applicationDao;
 
-    public ExpertService(Database database) {
-        expertDao = new ExpertDaoImpl(database);
-        applicationDao = new ApplicationDaoImpl(database);
+    public ExpertService() {
+        expertDao = new ExpertDaoImpl();
+        applicationDao = new ApplicationDaoImpl();
     }
 
     public String registerExpert(String requestJsonString) {
@@ -63,7 +64,7 @@ public class ExpertService {
         }
     }
 
-    public String expertShowApplications(String tokenDtoJson, List<String> subjects) {
+    public String expertShowApplications(String tokenDtoJson, List<Subject> subjects) {
         Gson json = new Gson();
         try {
             TokenDtoResponse tokenDto = json.fromJson(tokenDtoJson, TokenDtoResponse.class);
@@ -113,7 +114,7 @@ public class ExpertService {
             if (tokenDto.getToken().length() == 36) {
                 String token = tokenDto.getToken();
                 try {
-                    return json.toJson(new DtoResponse(applicationDao.showRatedApplications(token)));
+                    return json.toJson(new DtoResponse(json.toJson(applicationDao.showRatedApplications(token))));
                 } catch (CompetitionException e) {
                     return json.toJson(new DtoError(e.getErrorCode().getErrorString()));
                 }
@@ -156,6 +157,25 @@ public class ExpertService {
                 Application application = new Application(applicationDto);
                 try {
                     return json.toJson(new DtoResponse(expertDao.deleteRating(token, application)));
+                } catch (CompetitionException e) {
+                    return json.toJson(new DtoError(e.getErrorCode().getErrorString()));
+                }
+            } else {
+                return json.toJson(new DtoError("invalid request"));
+            }
+        } catch (JsonSyntaxException e) {
+            return json.toJson(new DtoError("invalid request"));
+        }
+    }
+
+    public String showExpertSubjects(String tokenDtoJson) {
+        Gson json = new Gson();
+        try {
+            TokenDtoResponse tokenDto = json.fromJson(tokenDtoJson, TokenDtoResponse.class);
+            if (tokenDto.getToken().length() == 36) {
+                String token = tokenDto.getToken();
+                try {
+                    return json.toJson(new DtoResponse(expertDao.showExpertSubjects(token)));
                 } catch (CompetitionException e) {
                     return json.toJson(new DtoError(e.getErrorCode().getErrorString()));
                 }

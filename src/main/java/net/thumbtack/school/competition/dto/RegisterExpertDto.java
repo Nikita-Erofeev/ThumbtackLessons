@@ -1,16 +1,18 @@
 package net.thumbtack.school.competition.dto;
 
+import net.thumbtack.school.competition.model.Subject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class RegisterExpertDto {
     private String firstName;
     private String lastName;
-    private List<String> subjectsList = new ArrayList<>();
+    private List<Subject> subjectsList = new ArrayList<>();
     private String login;
     private String password;
 
-    public RegisterExpertDto(String firstName, String lastName, List<String> subjectsList, String login, String password) {
+    public RegisterExpertDto(String firstName, String lastName, List<Subject> subjectsList, String login, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.subjectsList.addAll(subjectsList);
@@ -34,7 +36,7 @@ public class RegisterExpertDto {
         return password;
     }
 
-    public List<String> getSubjectsList() {
+    public List<Subject> getSubjectsList() {
         return subjectsList;
     }
 }

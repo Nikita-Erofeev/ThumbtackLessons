@@ -1,10 +1,11 @@
 package net.thumbtack.school.competition.server;
 
 import com.google.gson.Gson;
-import net.thumbtack.school.competition.database.Database;
 import net.thumbtack.school.competition.dto.DtoError;
 import net.thumbtack.school.competition.dto.DtoResponse;
-import net.thumbtack.school.competition.exceptions.CompetitionException;
+import net.thumbtack.school.competition.model.Subject;
+import net.thumbtack.school.competition.mybatis.utils.MyBatisUtils;
+import net.thumbtack.school.competition.service.AdminService;
 import net.thumbtack.school.competition.service.ExpertService;
 import net.thumbtack.school.competition.service.MemberService;
 import net.thumbtack.school.competition.service.UserService;
@@ -16,29 +17,26 @@ public class Server {
     private UserService userService;
     private MemberService memberService;
     private ExpertService expertService;
+    private AdminService adminService;
     private Gson json = new Gson();
 
-    public String startServer(String savedDataFileName) {
-        try {
-            run = Database.uploadDatabase(savedDataFileName);
-            Database database = Database.getInstance();
-            userService = new UserService(database);
-            memberService = new MemberService(database);
-            expertService = new ExpertService(database);
-            return json.toJson(new DtoResponse("Database uploaded"));
-        } catch (CompetitionException e) {
-            return json.toJson(new DtoError(e.getErrorCode().getErrorString()));
+    public String startServer() {
+        boolean initSqlSessionFactory = MyBatisUtils.initSqlSessionFactory();
+        if (!initSqlSessionFactory) {
+            throw new RuntimeException("Can't create connection, stop");
+        } else {
+            run = true;
         }
-
+        userService = new UserService();
+        memberService = new MemberService();
+        expertService = new ExpertService();
+        adminService = new AdminService();
+        return json.toJson(new DtoResponse("Database uploaded"));
     }
 
     public String stopServer(String savedDataFileName) {
-        try {
-            run = !Database.saveDatabase(savedDataFileName);
-            return json.toJson(new DtoResponse("Database saved"));
-        } catch (CompetitionException e) {
-            return json.toJson(new DtoError(e.getErrorCode().getErrorString()));
-        }
+        run = false;
+        return json.toJson(new DtoResponse("Database saved"));
     }
 
     public String registerMember(String requestJsonString) {
@@ -133,7 +131,7 @@ public class Server {
         return json.toJson(new DtoError("Database is not available"));
     }
 
-    public String expertShowApplications(String tokenDtoJson, List<String> subjects) {
+    public String expertShowApplications(String tokenDtoJson, List<Subject> subjects) {
         if (run) {
             return expertService.expertShowApplications(tokenDtoJson, subjects);
         }
@@ -168,9 +166,16 @@ public class Server {
         return json.toJson(new DtoError("Database is not available"));
     }
 
+    public String showExpertSubject(String tokenDtoJson) {
+        if (run) {
+            return expertService.showExpertSubjects(tokenDtoJson);
+        }
+        return json.toJson(new DtoError("Database is not available"));
+    }
+
     public String summarize(String summarizeDtoJson) {
         if (run) {
-            return userService.summarize(summarizeDtoJson);
+            return adminService.summarize(summarizeDtoJson);
         }
         return json.toJson(new DtoError("Database is not available"));
     }
